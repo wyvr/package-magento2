@@ -1,0 +1,17 @@
+{
+    "name": "@wyvr/package-magento",
+    "description": "wyvr magento 2 package",
+    "type": "module",
+    "keywords": [
+        "wyvr",
+        "pacakge",
+        "shop",
+        "ecommerce",
+        "magento2"
+    ],
+    "dependencies": {
+        "@wyvr/package-shop": "dev-main",
+        "@elastic/elasticsearch": "^8.4.0",
+        "entities": "^4.5.0"
+    }
+}
