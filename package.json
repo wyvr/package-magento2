@@ -10,7 +10,6 @@
     "magento2"
   ],
   "dependencies": {
-    "@wyvr/package-shop": "dev-main",
     "@elastic/elasticsearch": "^8.4.0",
     "entities": "^4.5.0"
   },
