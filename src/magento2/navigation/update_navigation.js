@@ -1,13 +1,12 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import * as DB from '@src/magento2/database/navigation.js';
+import { set } from '@src/magento2/database/navigation.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 
 export async function update_navigation() {
     const stores = Config.get('shop.stores');
     const slug = Config.get('shop.slug.category', 'category');
 
-    await DB.open();
     await Promise.all(
         Object.entries(stores).map(async ([store_name, store_id]) => {
             const category_data = await load_data(`wyvr_category_${store_id}`, undefined, 1000);
@@ -17,17 +16,28 @@ export async function update_navigation() {
                 delete entry.category.products;
                 return entry.category;
             });
-            const tree = build_tree(list, store_name, slug);
+            let tree = build_tree(list, store_name, slug);
+            // store raw navigation
+            set(store_id + '_full', tree);
 
-            await DB.set('navigation', 'category_' + store_id, tree);
+            // avoid navigation with only one category in the first level
+            if (tree.length <= 1) {
+                tree = tree[0].children;
+            }
+            // avoid navigation deeper than configured level
+            const max_depth = Config.get('magento2.navigation.max_depth', 4);
+            if (!isNaN(max_depth)) {
+                tree = apply_max_depth(tree, max_depth);
+            }
+
+            // store the processed navigation tree
+            set(store_id, tree);
 
             Logger.info('update magento navigation for store', store_id);
 
             return undefined;
         })
     );
-
-    await DB.close();
 }
 
 export function build_tree(list, store_name, slug) {
@@ -81,4 +91,20 @@ export function build_tree(list, store_name, slug) {
         return undefined;
     }
     return map[id]?.children;
+}
+
+function apply_max_depth(tree, max_depth) {
+    return tree
+        .map((node) => {
+            if (node.level > max_depth) {
+                return null;
+            }
+
+            if (Array.isArray(node.children)) {
+                node.children = apply_max_depth(node.children, max_depth);
+            }
+
+            return node;
+        })
+        .filter(Boolean);
 }
