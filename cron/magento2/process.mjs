@@ -1,4 +1,4 @@
-import { execute_route } from '@wyvr/generator/route.js';
+import { execute_route } from '@wyvr/generator/cron.js';
 import { exists, read, remove } from '@wyvr/generator/src/utils/file.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
