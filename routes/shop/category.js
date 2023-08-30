@@ -9,7 +9,7 @@ import { reduce_attributes } from '@src/shop/core/attributes.mjs';
 const slug = Config.get('shop.slug.category', 'category');
 export default {
     url: `/[store]/${slug}/[slug]`,
-    onExec: async ({ params, data, setStatus }) => {
+    onExec: async ({ request, params, data, setStatus }) => {
         if (!data?.store?.value) {
             Logger.warning('missing data in category', data.url);
             return data;
@@ -22,14 +22,10 @@ export default {
             return await onExec({ data, setStatus });
         }
         let category;
-        try {
+        if (Array.isArray(category_data) && category_data.length > 0 && category_data[0].category) {
             category = category_data[0].category;
-        } catch (e) {
-            Logger.error(
-                'category convert error',
-                params.slug,
-                get_error_message(e, import.meta.url, 'magento2 product')
-            );
+        } else {
+            Logger.error('category convert error', request.url, category_data);
         }
 
         if (!category) {
