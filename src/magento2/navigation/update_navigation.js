@@ -4,7 +4,7 @@ import * as DB from '@src/magento2/database/navigation.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 
 export async function update_navigation() {
-    const stores = Config.get('shop.stores'); //{ global: 1 };
+    const stores = Config.get('shop.stores');
     const slug = Config.get('shop.slug.category', 'category');
 
     await DB.open();
