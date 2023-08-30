@@ -38,9 +38,13 @@ export async function open_db(db, connection, name, sql_create_table) {
 }
 
 export async function close_db(db, connection) {
-    if (connection) {
-        await connection.close();
-        connection = undefined;
+    try {
+        if (connection) {
+            await connection.close();
+            connection = undefined;
+        }
+    } catch (e) {
+        Logger.debug(db, e);
     }
     if (db) {
         db.connected = false;
