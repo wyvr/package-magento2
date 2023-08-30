@@ -17,7 +17,7 @@
             return;
         }
         const result = await search(get_product_id_query(getWyvrData('store.value', 0), id));
-        url = `/${[getWyvrData('store.key'), _inject('config.magento2.slug.product', 'p'), result?.hits?.hits[0]?._source?.url].filter((x) => x).join('/')}/`;
+        url = `/${[getWyvrData('store.key'), _inject('config.shop.slug.product', 'p'), result?.hits?.hits[0]?._source?.url].filter((x) => x).join('/')}/`;
     });
 </script>
 
