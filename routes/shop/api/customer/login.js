@@ -17,7 +17,6 @@ export default {
         const internal_error = __('shop.internal_error');
         const login_error = __('customer.login_error');
         const email = get_form_body_value(body?.email);
-        const password = get_form_body_value(body?.password);
         const data = {};
         const store = params?.store;
         const errors = [];
