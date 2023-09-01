@@ -1,4 +1,4 @@
-import { get_page_by_url } from '@src/shop/core/data.mjs';
+import { get_page_by_url } from '@src/magento2/core/data.mjs';
 import { get } from '@src/shop/core/settings.mjs';
 
 export async function append_home_page(url, store_id, append_to, redirect_fn) {
@@ -24,11 +24,12 @@ export async function append_home_page(url, store_id, append_to, redirect_fn) {
             });
             append_to.avoid_not_found = true;
             append_to.home_page = true;
-            append_to._wyvr = {
-                template: [`shop/HomePage`, 'shop/Default'],
-                persist: true,
-                language: append_to.locale || 'en',
-            };
+            if (!append_to._wyvr) {
+                append_to._wyvr = {};
+            }
+            (append_to._wyvr.template = [`shop/HomePage`, 'shop/Default'].concat(append_to._wyvr.template || [])),
+                (append_to._wyvr.persist = true),
+                (append_to._wyvr.language = append_to.locale || 'en');
         }
     }
     return append_to;

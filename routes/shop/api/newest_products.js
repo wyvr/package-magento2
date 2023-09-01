@@ -1,5 +1,5 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { get_magento_data } from '@src/shop/core/data.mjs';
+import { get_magento_data } from '@src/magento2/core/data.mjs';
 import { get_catalog_products_query } from '@src/shop/core/search/product.mjs';
 import { search } from '@src/shop/core/elasticsearch.mjs';
 import { reduce_attributes } from '@src/shop/core/attributes.mjs';

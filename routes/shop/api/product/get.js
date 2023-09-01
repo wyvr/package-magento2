@@ -1,6 +1,6 @@
 import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
 import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
-import { get_magento_data } from '@src/shop/core/data.mjs';
+import { get_magento_data } from '@src/magento2/core/data.mjs';
 import { search } from '@src/shop/core/elasticsearch.mjs';
 import { get_product_sku_query } from '@src/shop/core/search/product.mjs';
 

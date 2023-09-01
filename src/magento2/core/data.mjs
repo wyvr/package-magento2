@@ -1,16 +1,8 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { write } from '@wyvr/generator/src/utils/file.js';
 import { get } from '@src/shop/core/settings.mjs';
 import { replace_content } from '@src/shop/core/replace_content.mjs';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 
-export async function append_magento_data(url, append_to) {
-    const magento_data = await get_magento_data(url);
-    Object.keys(magento_data).forEach((key) => {
-        append_to[key] = magento_data[key];
-    });
-    return append_to;
-}
 export async function get_magento_data(url) {
     const data = {
         date: new Date(),
@@ -41,7 +33,6 @@ export async function get_magento_data(url) {
     data.currency = await get(store_id, 'currency.options.default', message, 'EUR');
     return data;
 }
-
 export function get_store_key(url) {
     const store_match = url.match(/^\/([^\/]+)\//);
     if (store_match && store_match[1]) {

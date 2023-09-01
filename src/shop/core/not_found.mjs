@@ -1,10 +1,11 @@
 import { get } from '@src/shop/core/settings.mjs';
-import { get_page_by_url } from '@src/shop/core/data.mjs';
+import { get_page_by_url } from '@src/magento2/core/data.mjs';
 
 export async function onExec({ data, setStatus }) {
     if(data?.avoid_not_found) {
         return data;
     }
+    data.not_found = true;
     setStatus(404);
     const store_id = data?.store?.value;
     if (store_id == null) {
