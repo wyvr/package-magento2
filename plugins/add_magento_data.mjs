@@ -3,7 +3,7 @@ import { append_cms_page } from '@src/magento2/core/append_cms_page.mjs';
 import { append_home_page } from '@src/magento2/core/append_home_page.mjs';
 
 export default {
-    route_on_exec_context: {
+    construct_route_context: {
         after: async ({result}) => {
             if(!result?.data) {
                 return result;
