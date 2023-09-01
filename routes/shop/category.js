@@ -1,7 +1,6 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
 import { onExec, _wyvr } from '@src/shop/core/not_found.mjs';
 import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
 import { reduce_attributes } from '@src/shop/core/attributes.mjs';
@@ -11,13 +10,16 @@ export default {
     url: `/[store]/${slug}/[slug]`,
     onExec: async ({ request, params, data, setStatus }) => {
         if (!data?.store?.value) {
-            Logger.warning('missing data in category', data.url);
+            Logger.warning('missing store id in category', data.url);
             return data;
         }
         let start = new Date().getTime();
         const store_id = data.store.value;
 
-        const category_data = await load_data(`wyvr_category_${store_id}`, { url: params.slug });
+        const category_url_prefix = Config.get('magento2.elasticsearch.category_url_prefix', {});
+        const url = category_url_prefix[store_id] ? `${category_url_prefix[store_id]}/${params.slug}` : params.slug;
+
+        const category_data = await load_data(`wyvr_category_${store_id}`, { url });
         if (!category_data) {
             return await onExec({ data, setStatus });
         }
