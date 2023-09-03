@@ -1,4 +1,4 @@
-import { onExec } from '@src/shop/core/media_fallback';
+import { onExec } from '@src/magento2/core/media_fallback';
 
 export default {
     url: '/media/[config]/[filepath]',
