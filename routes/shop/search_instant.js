@@ -1,4 +1,3 @@
-import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get } from '@src/shop/core/settings.mjs';
 import { search_execute } from '@src/shop/core/search/search.mjs';
 
@@ -9,9 +8,11 @@ export default {
             methods: ['post'],
         };
     },
-    onExec: async ({ body, params, returnJSON }) => {
-        const stores = Config.get('shop.stores');
-        const store_id = stores[params.store];
+    onExec: async ({ body, params, returnJSON, data }) => {
+        const store_id = data?.store?.value;
+        if (!store_id) {
+            return returnJSON({ message: __('shop..internal_error') }, 500);
+        }
         const date = new Date();
 
         const code = await get(store_id, 'general.locale.code', `magento 2 search`, 'en_US');

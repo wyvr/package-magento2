@@ -5,11 +5,8 @@ import { FOLDER_GEN } from '@wyvr/generator/src/constants/folder.js';
 import { write } from '@wyvr/generator/src/utils/file.js';
 import { readFile } from 'node:fs/promises';
 
-export async function onExec({ request, returnData, returnJson }) {
-    const store_name = Config.get('shop.default_store');
-    const stores = Config.get('shop.stores');
-    const store_id = stores[store_name];
-    if (!store_id) {
+export async function onExec({ request, returnData, returnJson, data }) {
+    if (!data?.store?.value) {
         return returnJson({ message: __('shop.internal_error') }, 500);
     }
     const default_image = Config.get('magento2.product.default_image');
