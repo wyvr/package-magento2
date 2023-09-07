@@ -13,7 +13,8 @@ export async function load_data(index, match, size) {
             {
                 match_all: {},
             },
-            size
+            size,
+            { scroll: '10s' }
         );
     }
     return await query_data(
@@ -25,7 +26,7 @@ export async function load_data(index, match, size) {
     );
 }
 
-export async function query_data(index, query, size) {
+export async function query_data(index, query, size, options) {
     const data = {
         index,
         query,
@@ -33,19 +34,50 @@ export async function query_data(index, query, size) {
     if (size && typeof size == 'number') {
         data.size = size;
     }
+    data.rest_total_hits_as_int = true;
+    if (options) {
+        Object.entries(options).forEach(([key, value]) => {
+            data[key] = value;
+        });
+    }
     const result = await search(data);
     if (!result) {
         return undefined;
     }
+    let hits = undefined;
     if (Array.isArray(result?.hits?.hits)) {
         try {
-            return result?.hits?.hits.map((x) => x._source);
+            hits = result?.hits?.hits.map((x) => x._source);
         } catch (e) {
             Logger.error(term, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
-            return undefined;
         }
     }
-    return undefined;
+    let scroll_id = result._scroll_id;
+    if (!scroll_id) {
+        return hits;
+    }
+    const total = result.hits?.total;
+    if (!total) {
+        return hits;
+    }
+
+    while (scroll_id) {
+        const scroll_result = await get_client().scroll({ scroll_id, rest_total_hits_as_int: true });
+        if (!scroll_result) {
+            return hits;
+        }
+        if (Array.isArray(scroll_result?.hits?.hits)) {
+            hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source));
+        }
+        if (!scroll_result._scroll_id) {
+            return hits;
+        }
+        if (hits.length >= total) {
+            scroll_id = undefined;
+        }
+    }
+
+    return hits;
 }
 
 export async function search(data) {
