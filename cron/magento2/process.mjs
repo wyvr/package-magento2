@@ -75,12 +75,12 @@ export default async function () {
             switch (file.type) {
                 case 'product':
                     get_url = (url) => {
-                        return `/${join(file.store_name, 'p', url)}/`;
+                        return `/${join(file.store_name, Config.get('shop.slug.product', 'product'), url)}/`;
                     };
                     break;
                 case 'category':
                     get_url = (url) => {
-                        return `/${join(file.store_name, 'c', url)}/`;
+                        return `/${join(file.store_name, Config.get('shop.slug.category', 'category'), url)}/`;
                     };
                     break;
             }
