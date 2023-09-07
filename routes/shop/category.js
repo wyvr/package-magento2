@@ -2,8 +2,7 @@ import { Config } from '@wyvr/generator/src/utils/config.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
 import { onExec, _wyvr } from '@src/shop/core/not_found.mjs';
-import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
-import { reduce_attributes } from '@src/shop/core/attributes.mjs';
+import { transform_elasticsearch_products } from '@src/magento2/core/transform_elasticsearch_products.js';
 
 const slug = Config.get('shop.slug.category', 'category');
 export default {
@@ -45,35 +44,9 @@ export default {
         start = new Date().getTime();
 
         category.products = [];
-        const allowed_attributes = Config.get('shop.attributes.list.allow');
-        const denied_attributes = Config.get('shop.attributes.list.deny');
 
         if (Array.isArray(cache_data) && cache_data.length > 0) {
-            category.products = cache_data[0].products.map((product_data) => {
-                const product = {};
-                Object.keys(product_data)
-                    .filter((key) => category_product_attributes.indexOf(key) > -1)
-                    .forEach((key) => {
-                        if (key == 'configurable_products') {
-                            const child_products = product_data[key]
-                                .map((child_product) => {
-                                    const product = {};
-                                    Object.keys(child_product)
-                                        .filter((key) => category_product_attributes.indexOf(key) > -1)
-                                        .forEach((key) => {
-                                            product[key] = child_product[key];
-                                        });
-                                    return product;
-                                })
-                                .filter((x) => x);
-
-                            product[key] = child_products;
-                            return;
-                        }
-                        product[key] = product_data[key];
-                    });
-                return reduce_attributes(product, allowed_attributes, denied_attributes);
-            });
+            category.products = transform_elasticsearch_products(cache_data[0].products);
         }
 
         data.category = category;
