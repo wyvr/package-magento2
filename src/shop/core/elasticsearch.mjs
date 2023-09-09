@@ -80,6 +80,16 @@ export async function query_data(index, query, size, options) {
     return hits;
 }
 
+export async function exists_index(index) {
+    const data = { index };
+    try {
+        const result = await get_client().indices.exists(data);
+        return result;
+    } catch (e) {
+        return false;
+    }
+}
+
 export async function search(data) {
     try {
         const result = await get_client().search(data);
@@ -90,12 +100,32 @@ export async function search(data) {
     }
 }
 
+export async function del(index, id) {
+    const data = { id, index };
+    try {
+        await get_client().delete(data);
+        return true;
+    } catch (e) {
+        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        return false;
+    }
+}
+export async function del_index(index) {
+    const data = { index };
+    try {
+        await get_client().indices.delete(data);
+        return true;
+    } catch (e) {
+        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        return false;
+    }
+}
+
 export function get_client() {
     if (client) {
         return client;
     }
     const elasticsearch = Config.get('magento2.elasticsearch', { node: 'http://localhost:9200' });
-    const stores = Config.get('shop.stores', { default: 0 });
     client = new Client({
         node: elasticsearch.node,
         auth: elasticsearch.auth,

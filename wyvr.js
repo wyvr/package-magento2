@@ -7,9 +7,6 @@ export default {
                 password: 'changeme',
             }*/
         },
-        marker: {
-            dir: '<magento_root>/var',
-        },
     },
     _secrets: {
         magento2: {
