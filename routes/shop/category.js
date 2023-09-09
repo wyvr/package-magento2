@@ -26,7 +26,7 @@ export default {
         if (Array.isArray(category_data) && category_data.length > 0 && category_data[0].category) {
             category = category_data[0].category;
         } else {
-            Logger.error('category convert error', request.url, category_data);
+            Logger.error('category not found', request.url, category_data);
         }
 
         if (!category) {
