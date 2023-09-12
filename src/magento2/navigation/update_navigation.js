@@ -2,6 +2,7 @@ import { Config } from '@wyvr/generator/src/utils/config.js';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
 import { set } from '@src/magento2/database/navigation.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { url_join } from '@src/shop/core/url.mjs';
 
 export async function update_navigation() {
     const stores = Config.get('shop.stores');
@@ -51,11 +52,7 @@ export function build_tree(list, store_name, slug) {
         }
         // add url
         if (entry.url_path) {
-            const partial_url = [store_name, slug, entry.url_path]
-                .filter(Boolean)
-                .map((part) => part.trim())
-                .join('/');
-            entry.url = `/${partial_url}/`;
+            entry.url = url_join(store_name, slug, entry.url_path);
         }
 
         if (!map[entry.parent_id]) {
