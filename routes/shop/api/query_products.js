@@ -5,6 +5,7 @@ import { search } from '@src/shop/core/elasticsearch.mjs';
 import { get_attribute_value, reduce_attributes } from '@src/shop/core/attributes.mjs';
 import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
 import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
+import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
 
 export default {
     url: '/[store]/api/query_products/',
@@ -75,7 +76,7 @@ export default {
 
         magento_data.products = filtered_products
             .slice(0, amount)
-            .map((p) => reduce_attributes(p, allowed_attributes, denied_attributes));
+            .map((p) => reduce_attributes(p, category_product_attributes));
 
         if (isProd) {
             set_cache(cache_key, magento_data);

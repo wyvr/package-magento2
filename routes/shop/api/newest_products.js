@@ -1,10 +1,11 @@
-import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get_magento_data } from '@src/magento2/core/data.mjs';
 import { get_catalog_products_query } from '@src/shop/core/search/product.mjs';
 import { search } from '@src/shop/core/elasticsearch.mjs';
 import { reduce_attributes } from '@src/shop/core/attributes.mjs';
 import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
 import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
+import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
+
 
 export default {
     url: '/[store]/api/newest_products/[flag]/[amount]/',
@@ -66,12 +67,9 @@ export default {
             sorted_products = sorted_products.filter((p) => p.new && p.new != '0');
         }
 
-        const allowed_attributes = Config.get('magento2.attributes.slider.allow');
-        const denied_attributes = Config.get('magento2.attributes.slider.deny');
-
         magento_data.products = sorted_products
             .slice(0, amount)
-            .map((p) => reduce_attributes(p, allowed_attributes, denied_attributes));
+            .map((p) => reduce_attributes(p, category_product_attributes));
 
         if (isProd) {
             set_cache(data.url, magento_data);
