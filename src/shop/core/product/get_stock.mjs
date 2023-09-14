@@ -20,5 +20,11 @@ export function get_stock(product) {
         stock.is_in_stock = child_stocks.find((s) => s.is_in_stock == '1') != null;
         stock.qty = Math.max(...child_stocks.map((s) => parseFloat(s.qty)));
     }
+    if (typeof stock.qty == 'string') {
+        stock.qty = parseFloat(stock.qty);
+    }
+    if (typeof stock.is_in_stock == 'string') {
+        stock.is_in_stock = stock.is_in_stock === '1';
+    }
     return stock;
 }
