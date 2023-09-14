@@ -22,9 +22,9 @@ export async function onExec({ request, returnData, returnJson, data }) {
         const content = await readFile(image_path);
         // persist the generated image
         const path = Cwd.get(request.url);
-        console.log(path);
+        Logger.info('fallback media', request.url);
         write(path, content);
-        
+
         returnData(content);
     } catch (e) {
         Logger.error('default image error', e.message);
