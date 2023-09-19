@@ -5,9 +5,9 @@ import { FOLDER_GEN } from '@wyvr/generator/src/constants/folder.js';
 import { write } from '@wyvr/generator/src/utils/file.js';
 import { readFile } from 'node:fs/promises';
 
-export async function onExec({ request, returnData, returnJson, data }) {
+export async function onExec({ request, returnData, returnJSON, data }) {
     if (!data?.store?.value) {
-        return returnJson({ message: __('shop.internal_error') }, 500);
+        return returnJSON({ message: __('shop.internal_error') }, 500);
     }
     const default_image = Config.get('magento2.product.default_image');
 
