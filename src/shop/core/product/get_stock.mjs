@@ -1,10 +1,8 @@
 import { get_attribute_value } from '../attributes.mjs';
+import { default_stock } from '@src/shop/core/product/default_stock.mjs';
 
 export function get_stock(product) {
-    const stock = {
-        is_in_stock: false,
-        qty: 0,
-    };
+    const stock = default_stock;
     const stock_attr = get_attribute_value(product, 'stock');
     if (stock_attr) {
         Object.entries(stock_attr).forEach(([key, value]) => (stock[key] = value));
