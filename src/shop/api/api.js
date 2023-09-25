@@ -41,14 +41,16 @@ export async function request(url, config = {}) {
         }
         response = await fetch(url, options);
 
+        const cookies = [];
+
         response?.headers?.forEach((value, key) => {
-            if (key == 'set-cookie') {
+            const new_key = key.toLowerCase();
+            if (new_key == 'set-cookie') {
+                cookies.push(convertCookieToObject(value));
                 return;
             }
-            headers[key] = value;
+            headers[new_key] = value;
         });
-
-        cookies = response?.headers?.getCookie() || [];
 
         const text = await response.text();
 
@@ -76,6 +78,27 @@ export async function request(url, config = {}) {
         url: response.url,
     };
 }
+
+function convertCookieToObject(cookieString) {
+    let chunks = cookieString.split('; ');
+    let cookie = {};
+
+    chunks.forEach((chunk) => {
+        const [key, value] = chunk.split('=');
+        const norm_key = key.toLowerCase();
+
+        if (norm_key === 'max-age') {
+            cookie['max-age'] = parseInt(value, 10);
+        } else if (norm_key === 'secure' || norm_key === 'httponly') {
+            cookie[norm_key] = true;
+        } else {
+            cookie[norm_key] = value;
+        }
+    });
+
+    return cookie;
+}
+
 export function jsonOptions(options) {
     if (!options || typeof options !== 'object') {
         return options;
