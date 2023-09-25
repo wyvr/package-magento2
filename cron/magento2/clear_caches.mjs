@@ -58,9 +58,16 @@ export default async function () {
     if (cache_clear?.hits?.hits.length > 0) {
         // delete the whole index as soon as possible
         await del_index(index);
-
         get_logger().warning('clear whole cache, this can take up some time');
+        // remove all generated routes when the generation should be cleared
+        remove(Cwd.get('cache', 'routes_persisted.txt'));
 
+        get_logger().info('clear', routes.length, 'generated routes');
+        routes.forEach((file) => {
+            remove(url_join(ReleasePath.get(), file));
+        });
+
+        // rebuild pages
         if (pages && pages.length > 0) {
             get_logger().info('generate', pages.length, 'pages');
             get_logger().debug('page urls', pages);
@@ -70,7 +77,6 @@ export default async function () {
                 })
             );
         }
-        await generate_routes(routes);
         return;
     }
 
