@@ -58,7 +58,7 @@ export default async function () {
     if (cache_clear?.hits?.hits.length > 0) {
         // delete the whole index as soon as possible
         await del_index(index);
-        get_logger().warning('clear whole cache, this can take up some time');
+        get_logger().warning('clear whole cache');
         // remove all generated routes when the generation should be cleared
         remove(Cwd.get('cache', 'routes_persisted.txt'));
 
