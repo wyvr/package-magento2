@@ -79,7 +79,7 @@ export default async function () {
         query: {
             match_all: {},
         },
-        size: 50,
+        size: 25,
     });
 
     /**
