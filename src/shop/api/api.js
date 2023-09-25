@@ -48,7 +48,7 @@ export async function request(url, config = {}) {
             headers[key] = value;
         });
 
-        cookies = response?.headers?.getSetCookie() || [];
+        cookies = response?.headers?.getCookie() || [];
 
         const text = await response.text();
 
