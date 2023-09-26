@@ -121,7 +121,7 @@ export function authOptions(bearer, options) {
     return options;
 }
 export function magentoUrl(url) {
-    const domain = Config.get('shop.domain');
+    const domain = Config.get('shop.api_domain');
     if (!domain) {
         return url;
     }
