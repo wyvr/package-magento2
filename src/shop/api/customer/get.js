@@ -8,7 +8,7 @@ export async function get_customer(store, id, isProd) {
         Logger.error('magento2 get customer, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
-    const get_url = magentoUrl(`/${store}/rest/all/V1/customers/${id}`);
+    const get_url = magentoUrl(`/rest/all/V1/customers/${id}`);
 
     let get_result;
     try {

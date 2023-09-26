@@ -5,11 +5,11 @@ import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { cart_model } from '@src/shop/api/cart/cart_model';
 
 export async function get_cart(store, cart_id, is_prod) {
-    const url = magentoUrl(`/${store}/rest/all/V1/carts/${cart_id}`);
+    const url = magentoUrl(`/rest/all/V1/carts/${cart_id}`);
     return await load_cart(url, false, cart_id, is_prod);
 }
 export async function get_guest_cart(store, cart_id, is_prod) {
-    const url = magentoUrl(`/${store}/rest/all/V1/guest-carts/${cart_id}`);
+    const url = magentoUrl(`/rest/all/V1/guest-carts/${cart_id}`);
     return await load_cart(url, true, cart_id, is_prod);
 }
 async function load_cart(url, is_guest, cart_id, is_prod) {

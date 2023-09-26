@@ -41,7 +41,7 @@ export default {
         };
 
         const customer = {};
-        const token_url = magentoUrl(`/${store}/rest/all/V1/integration/customer/token`);
+        const token_url = magentoUrl(`/rest/all/V1/integration/customer/token`);
 
         // get customer token
         try {
@@ -73,7 +73,7 @@ export default {
         // get customer information
         const admin_token = await get_admin_token(isProd);
         if (admin_token) {
-            const customer_url = appendSearchCriteriaToUrl(magentoUrl(`/${store}/rest/all/V1/customers/search`), {
+            const customer_url = appendSearchCriteriaToUrl(magentoUrl(`/rest/all/V1/customers/search`), {
                 filter: [{ field: 'email', conditionType: 'eq', value: email }],
                 pageSize: 1,
             });

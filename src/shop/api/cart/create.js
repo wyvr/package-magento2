@@ -18,7 +18,7 @@ export async function create_cart(store, email, customer_id, isProd) {
         Logger.error('magento2 create cart, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
-    let post_url = magentoUrl(`/${store}/rest/all/V1/customers/${customer_id}/carts`);
+    let post_url = magentoUrl(`/rest/all/V1/customers/${customer_id}/carts`);
 
     let cart_result;
     try {
@@ -70,7 +70,7 @@ export async function create_guest_cart(store, id, isProd) {
     }
 
     // create a new one
-    const post_url = magentoUrl(`/${store}/rest/all/V1/guest-carts`);
+    const post_url = magentoUrl(`/rest/all/V1/guest-carts`);
 
     let cart_result;
     try {

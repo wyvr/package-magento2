@@ -50,7 +50,7 @@ export default {
             return returnJSON({ message: errors }, 500);
         }
 
-        const register_url = magentoUrl(`/${store}/rest/all/V1/customers`);
+        const register_url = magentoUrl(`/rest/all/V1/customers`);
         const payload = {
             customer: {
                 firstname: customer.firstname,
