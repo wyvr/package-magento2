@@ -18,6 +18,10 @@ export async function update_navigation() {
                 return entry.category;
             });
             let tree = build_tree(list, store_name, slug);
+            if (!tree) {
+                Logger.error('empty categories error updating magento navigation for store', store_id);
+                return undefined;
+            }
             // store raw navigation
             set(store_id + '_full', tree);
 
