@@ -24,17 +24,21 @@ export async function clear_all_urls(index) {
         ?.map((page) => to_index(page.urls.find(Boolean)))
         .filter(Boolean);
     // delete the whole index as soon as possible
-    if (exists_index(index)) {
+    const index_exists = await exists_index(index);
+    if (index_exists) {
         await del_index(index);
     }
     get_logger().warning('clear whole cache');
     // remove all generated routes when the generation should be cleared
     remove(Cwd.get('cache', 'routes_persisted.txt'));
-
-    get_logger().info('clear', routes.length, 'generated routes');
-    routes.forEach((file) => {
-        remove(url_join(ReleasePath.get(), file));
-    });
+    if (routes && routes.length > 0) {
+        get_logger().info('clear', routes.length, 'generated routes');
+        routes.forEach((file) => {
+            remove(url_join(ReleasePath.get(), file));
+        });
+    } else {
+        get_logger().info('no routes to clear');
+    }
 
     // rebuild pages
     if (pages && pages.length > 0) {
@@ -45,6 +49,8 @@ export async function clear_all_urls(index) {
                 return await execute_page(url);
             })
         );
+    } else {
+        get_logger().info('no pages to rebuild');
     }
 }
 
