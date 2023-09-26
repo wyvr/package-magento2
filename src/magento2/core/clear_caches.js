@@ -1,7 +1,7 @@
 import { execute_route, execute_page, get_logger, get_config } from '@wyvr/generator/cron.js';
 import { read, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
 import { filled_string, filled_array } from '@wyvr/generator/src/utils/validate.js';
-import { del, del_index } from '@src/shop/core/elasticsearch.mjs';
+import { del, del_index, exists_index } from '@src/shop/core/elasticsearch.mjs';
 import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
 import { ReleasePath } from '@wyvr/generator/src/vars/release_path.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
@@ -24,7 +24,9 @@ export async function clear_all_urls(index) {
         ?.map((page) => to_index(page.urls.find(Boolean)))
         .filter(Boolean);
     // delete the whole index as soon as possible
-    await del_index(index);
+    if (exists_index(index)) {
+        await del_index(index);
+    }
     get_logger().warning('clear whole cache');
     // remove all generated routes when the generation should be cleared
     remove(Cwd.get('cache', 'routes_persisted.txt'));
