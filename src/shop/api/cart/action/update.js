@@ -30,7 +30,7 @@ export async function update_cart_action(store, email_or_cart_token, cart, data,
     }
 
     const [final_error, final_cart] = is_guest
-        ? await get_guest_cart(store, cart?.id, is_prod)
+        ? await get_guest_cart(store, cart?.cart_id || email_or_cart_token, is_prod)
         : await get_cart(store, cart?.id, is_prod);
     if (final_error) {
         errors.push(final_error);

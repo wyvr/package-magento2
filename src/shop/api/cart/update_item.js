@@ -5,14 +5,14 @@ import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { cart_model } from '@src/shop/api/cart/cart_model';
 
 export async function update_cart_item(store, cart, sku, qty, is_prod) {
-    const url = magentoUrl(`/rest/all/V1/carts/${cart.id}/items`);
-    return await update_item(url, false, cart, sku, qty, is_prod);
+    const url = magentoUrl(`/rest/all/V1/carts/${cart.cart_id}/items`);
+    return await update_item(url, cart, sku, qty, is_prod);
 }
 export async function update_guest_cart_item(store, cart, sku, qty, is_prod) {
-    const url = magentoUrl(`/rest/all/V1/guest-carts/${cart.id}/items`);
-    return await update_item(url, true, cart, sku, qty, is_prod);
+    const url = magentoUrl(`/rest/all/V1/guest-carts/${cart.cart_id}/items`);
+    return await update_item(url, cart, sku, qty, is_prod);
 }
-async function update_item(url, is_guest, cart, sku, qty, is_prod) {
+async function update_item(url, cart, sku, qty, is_prod) {
     const admin_token = await get_admin_token(is_prod);
     if (!admin_token) {
         Logger.error('magento2 update cart item, missing admin token');
@@ -22,7 +22,7 @@ async function update_item(url, is_guest, cart, sku, qty, is_prod) {
     const cart_item = {
         sku,
         qty,
-        quote_id: cart.id,
+        quote_id: cart.cart_id,
     };
     const item_id = cart.items.find((item) => item.sku === sku)?.item_id;
     if (item_id) {

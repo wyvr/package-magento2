@@ -64,6 +64,7 @@ export async function create_guest_cart(store, id, isProd) {
     const cart = {
         guest: true,
         id,
+        cart_id: undefined,
     };
     if (id != 'guest') {
         return [undefined, cart];
@@ -88,6 +89,6 @@ export async function create_guest_cart(store, id, isProd) {
         Logger.error(get_error_message(e, post_url, 'magento2 create guest cart'));
         return returnJSON({ message: __('shop.internal_error') }, 500);
     }
-    cart.id = cart_result?.body;
+    cart.cart_id = cart_result?.body;
     return [undefined, cart];
 }

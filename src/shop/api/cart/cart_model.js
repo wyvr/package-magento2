@@ -2,6 +2,7 @@ export function cart_model(guest, id, data) {
     const cart = {
         guest: !!guest,
         id,
+        cart_id: id,
         items: [],
         count: 0,
         qty: 0,
@@ -31,6 +32,9 @@ export function cart_model(guest, id, data) {
     }
     if (typeof data.updated_at == 'string') {
         cart.updated_at = data.updated_at;
+    }
+    if (!!guest) {
+        cart.id = data.id;
     }
     return cart;
 }

@@ -6,7 +6,7 @@ import { cart_model } from '@src/shop/api/cart/cart_model';
 
 export async function get_cart(store, cart_id, is_prod) {
     const url = magentoUrl(`/rest/all/V1/carts/${cart_id}`);
-    return await load_cart(url, false, cart_id, is_prod);
+    return await load_cart(url, false, cart_id, cart_id, is_prod);
 }
 export async function get_guest_cart(store, cart_id, is_prod) {
     const url = magentoUrl(`/rest/all/V1/guest-carts/${cart_id}`);

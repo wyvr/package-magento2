@@ -17,7 +17,7 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
                 cart: undefined,
             };
         }
-        const [get_guest_cart_error, guest_cart] = await get_guest_cart(store, guest_cart_meta?.id, is_prod);
+        const [get_guest_cart_error, guest_cart] = await get_guest_cart(store, guest_cart_meta?.cart_id || email_or_cart_token, is_prod);
         if (get_guest_cart_error) {
             return {
                 error: get_guest_cart_error,
