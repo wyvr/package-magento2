@@ -14,7 +14,7 @@ export async function load_data(index, match, size) {
                 match_all: {},
             },
             size,
-            { scroll: '10s' }
+            { scroll: '20s' }
         );
     }
     return await query_data(
@@ -60,19 +60,30 @@ export async function query_data(index, query, size, options) {
     if (!total) {
         return hits;
     }
-
     while (scroll_id) {
-        const scroll_result = await get_client().scroll({ scroll_id, rest_total_hits_as_int: true });
+        // @SEE https://stackoverflow.com/questions/63216861/elasticsearch-scroll-api-returns-terminated-early-without-scroll-id
+        const scroll_result = await get_client().scroll({
+            scroll_id,
+            scroll: options?.scroll ?? '20s',
+            rest_total_hits_as_int: true,
+        });
         if (!scroll_result) {
+            Logger.error(`magento2 elasticsearch scroll returned no result`);
             return hits;
         }
-        if (Array.isArray(scroll_result?.hits?.hits)) {
-            hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source));
-        }
-        if (!scroll_result._scroll_id) {
+        if (!scroll_result._scroll_id || !Array.isArray(scroll_result?.hits?.hits)) {
+            Logger.error(
+                `magento2 elasticsearch scroll ended early ${hits.length} of ${total} loaded only ~${Math.round(
+                    (100 / total) * hits.length
+                )}% terminated:${scroll_result.terminated_early}`
+            );
             return hits;
         }
-        if (hits.length >= total) {
+        // filter search results as early as possible
+        hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source);
+        
+        // avoid scrolling when no results gets returned
+        if (scroll_result?.hits?.hits?.length == 0) {
             scroll_id = undefined;
         }
     }
