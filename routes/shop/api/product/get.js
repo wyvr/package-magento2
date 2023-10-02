@@ -30,15 +30,15 @@ export default {
         const result = await search(query);
 
         if (!result?.hits?.hits) {
-            return returnJSON(undefined);
+            return returnJSON(undefined, 400);
         }
 
         const product = result.hits.hits.find((x) => x?._source?.product);
         if (!product) {
-            return returnJSON(undefined);
+            return returnJSON(undefined, 404);
         }
-        if(isProd) {
-            set_cache(data.url, product._source.product)
+        if (isProd) {
+            set_cache(data.url, product._source.product);
         }
         return returnJSON(product._source.product);
     },
