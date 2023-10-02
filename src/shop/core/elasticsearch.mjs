@@ -6,7 +6,7 @@ import { filled_object } from '@wyvr/generator/src/utils/validate.js';
 
 let client;
 
-export async function load_data(index, match, size) {
+export async function load_data(index, match, size, filter_fn) {
     if (!filled_object(match)) {
         return await query_data(
             index,
@@ -14,7 +14,8 @@ export async function load_data(index, match, size) {
                 match_all: {},
             },
             size,
-            { scroll: '20s' }
+            { scroll: '20s' },
+            filter_fn
         );
     }
     return await query_data(
@@ -22,15 +23,20 @@ export async function load_data(index, match, size) {
         {
             match,
         },
-        size
+        size,
+        undefined,
+        filter_fn
     );
 }
 
-export async function query_data(index, query, size, options) {
+export async function query_data(index, query, size, options, filter_fn) {
     const data = {
         index,
         query,
     };
+    if (typeof filter_fn != 'function') {
+        filter_fn = () => true;
+    }
     if (size && typeof size == 'number') {
         data.size = size;
     }
@@ -47,7 +53,7 @@ export async function query_data(index, query, size, options) {
     let hits = undefined;
     if (Array.isArray(result?.hits?.hits)) {
         try {
-            hits = result?.hits?.hits.map((x) => x._source);
+            hits = result?.hits?.hits.map((x) => x._source).filter(filter_fn);
         } catch (e) {
             Logger.error(term, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
         }
@@ -80,8 +86,8 @@ export async function query_data(index, query, size, options) {
             return hits;
         }
         // filter search results as early as possible
-        hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source);
-        
+        hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source).filter(filter_fn));
+
         // avoid scrolling when no results gets returned
         if (scroll_result?.hits?.hits?.length == 0) {
             scroll_id = undefined;
