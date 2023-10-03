@@ -1,8 +1,8 @@
 // magento 2 visibility values and meaning
-const VISIBILITY_NOT_VISIBLE = 1;
-const VISIBILITY_IN_CATALOG = 2;
-const VISIBILITY_IN_SEARCH = 3;
-const VISIBILITY_BOTH = 4;
+export const VISIBILITY_NOT_VISIBLE = 1;
+export const VISIBILITY_IN_CATALOG = 2;
+export const VISIBILITY_IN_SEARCH = 3;
+export const VISIBILITY_BOTH = 4;
 
 export function get_product_index_name(store_id) {
     return `wyvr_product_${store_id}`;
