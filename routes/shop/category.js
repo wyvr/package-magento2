@@ -18,10 +18,10 @@ export default {
         const category_url_prefix = Config.get('magento2.elasticsearch.category_url_prefix', {});
         const url = category_url_prefix[store_id] ? `${category_url_prefix[store_id]}/${params.slug}` : params.slug;
 
-        Logger.warning('get category', url)
+        Logger.warning('get category', url);
         const category_data = await load_data(`wyvr_category_${store_id}`, { url });
         if (!category_data) {
-            Logger.warning('no category data found for', url)
+            Logger.warning('no category data found for', url);
             return await onExec({ data, setStatus });
         }
         let category;
@@ -63,10 +63,12 @@ export default {
             return _wyvr({ data });
         }
         const result = {
-            template: ['shop/Category', 'shop/Default'],
-            methods: ['get'],
-            persist: true,
-            language: data?.locale || 'en',
+            ...(data?._wyvr ?? {}),
+            ...{
+                template: ['shop/Category', 'shop/Default'],
+                methods: ['get'],
+                persist: true,
+            },
         };
         if (!data?.category?.entity_id) {
             return result;

@@ -73,21 +73,21 @@ export default {
 
         const type = data.product.type_id.charAt(0).toUpperCase() + data.product.type_id.slice(1);
         const sku = typeof data.product.sku == 'string' ? data.product.sku : data.product.sku.value;
-
-        const wyvr_data = {
-            template: [
-                `shop/product/id/${data.product.entity_id}`,
-                `shop/product/sku/${sku}`,
-                `shop/product/${type}`,
-                'shop/Product',
-                'shop/Default',
-            ],
-            methods: ['get'],
-            persist: true,
-            language: data?.locale || 'en',
+        
+        return {
+            ...(data?._wyvr ?? {}),
+            ...{
+                template: [
+                    `shop/product/id/${data.product.entity_id}`,
+                    `shop/product/sku/${sku}`,
+                    `shop/product/${type}`,
+                    'shop/Product',
+                    'shop/Default',
+                ],
+                methods: ['get'],
+                persist: true,
+            },
         };
-
-        return wyvr_data;
     },
     title: ({ params, data }) => data.product?.name?.value || params.slug,
     meta: ({ params, data }) => {

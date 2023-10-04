@@ -8,7 +8,7 @@ export async function onExec({ data, setStatus, returnRedirect, isProd }) {
     if (data.url == '/' && default_store) {
         return returnRedirect(`/${default_store}/`, isProd ? 301 : 302);
     }
-    
+
     if (data?.avoid_not_found) {
         return data;
     }
@@ -35,10 +35,11 @@ export function _wyvr({ data }) {
     if (data?.avoid_not_found) {
         return data?._wyvr;
     }
-    const wyvr_data = {
-        template: [`shop/NotFound`, 'shop/Default'],
-        persist: false,
-        language: data?.locale || 'en',
+    return {
+        ...(data?._wyvr ?? {}),
+        ...{
+            template: [`shop/NotFound`, 'shop/Default'],
+            persist: false,
+        },
     };
-    return wyvr_data;
 }

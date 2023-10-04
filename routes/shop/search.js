@@ -33,13 +33,14 @@ export default {
         };
     },
     _wyvr: ({ data }) => {
-        const wyvr_data = {
-            template: [`shop/Search`, 'shop/Default'],
-            methods: ['get', 'post'],
-            persist: false,
-            language: data?.locale || 'en',
+        return {
+            ...(data?._wyvr ?? {}),
+            ...{
+                template: [`shop/Search`, 'shop/Default'],
+                methods: ['get', 'post'],
+                persist: false,
+            },
         };
-        return wyvr_data;
     },
     title: () => __('search.search'),
     content: ({ data }) => {
