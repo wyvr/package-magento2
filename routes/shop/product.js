@@ -2,7 +2,8 @@ import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get_error_message } from '@wyvr/generator/src/utils/error.js';
-import { onExec, _wyvr } from '@src/shop/core/not_found.mjs';
+import { onExec } from '@src/magento2/core/not_found_exec.js';
+import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.mjs';
 import { url_join } from '@src/shop/core/url.mjs';
 

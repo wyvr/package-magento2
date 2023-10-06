@@ -1,7 +1,8 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { onExec, _wyvr } from '@src/shop/core/not_found.mjs';
+import { onExec } from '@src/magento2/core/not_found_exec.js';
+import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { transform_elasticsearch_products } from '@src/magento2/core/transform_elasticsearch_products.js';
 
 const slug = Config.get('shop.slug.category', 'category');
