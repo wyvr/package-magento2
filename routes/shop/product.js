@@ -17,8 +17,9 @@ export default {
             Logger.warning('missing data in product', data.url);
             return data;
         }
+        const product_index_name = `wyvr_product_${data.store.value}`;
         let start = new Date().getTime();
-        const product_data = await load_data(`wyvr_product_${data.store.value}`, { url: params.slug });
+        const product_data = await load_data(product_index_name, { url: params.slug });
         if (!Array.isArray(product_data) || product_data.length == 0) {
             return await onExec({ data, setStatus });
         }
@@ -36,6 +37,7 @@ export default {
             return await onExec({ data, setStatus });
         }
 
+        // redirect from the simple to the configurable
         if (
             redirect_simple_to_configurable &&
             product.type_id == 'simple' &&
@@ -56,6 +58,30 @@ export default {
                 'set-cookie': `redirect_from_simple=${params.slug}; path=/${params.store};`,
             });
         }
+        // add missing configurable products to the configurable, because they can be eather a small object with missing properties or the entity id
+        if (product.type_id == 'configurable') {
+            const products = await Promise.all(
+                product.configurable_products.map(async (entry) => {
+                    let id;
+                    if (typeof entry == 'string') {
+                        id = entry;
+                    }
+                    if (entry?.entity_id) {
+                        id = entry.entity_id;
+                    }
+                    if (!id) {
+                        return undefined;
+                    }
+                    // load the product by the entity id
+                    const product_data = await load_data(product_index_name, { id });
+                    if (!Array.isArray(product_data) || product_data.length == 0) {
+                        return undefined;
+                    }
+                    return product_data[0]?.product;
+                })
+            );
+            product.configurable_products = products.filter(Boolean);
+        }
 
         if (product?.status?.value !== '1') {
             return data;
@@ -73,7 +99,7 @@ export default {
 
         const type = data.product.type_id.charAt(0).toUpperCase() + data.product.type_id.slice(1);
         const sku = typeof data.product.sku == 'string' ? data.product.sku : data.product.sku.value;
-        
+
         return {
             ...(data?._wyvr ?? {}),
             ...{
