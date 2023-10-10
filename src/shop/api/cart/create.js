@@ -42,8 +42,8 @@ export async function create_cart(store, email, customer_id, isProd) {
         email: email,
         customer_id: customer_id,
         id: cart_result?.body,
-        // cache for 1 day (24h*60m*1000ms)
-        valid_until: new Date().getTime() + 1440000,
+        // cache for 1 minute (1m*60s*1000ms)
+        valid_until: new Date().getTime() + 60000,
     };
     try {
         await DB.open();
