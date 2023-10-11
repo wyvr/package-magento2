@@ -174,3 +174,18 @@ export function appendSearchCriteriaToUrl(url, search_criteria, propName = 'sear
             .join('&')
     );
 }
+export function replaceParameters(body) {
+    if (!body || !body.message) {
+        return '';
+    }
+    if (!Array.isArray(body.parameters) || body.parameters.length == 0) {
+        return body.message;
+    }
+    return body.message.replace(/%(\d+)/, (_, index) => {
+        index = parseInt(index, 10);
+        if (isNaN(index)) {
+            return '';
+        }
+        return body.parameters[index];
+    });
+}
