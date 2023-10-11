@@ -1,10 +1,11 @@
 import { Logger } from '@wyvr/generator/src/utils/logger.js';
 import { get_error_message } from '@wyvr/generator/src/utils/error.js';
 
-import { appendSearchCriteriaToUrl, authOptions, get, jsonOptions, magentoUrl, post } from '@src/shop/api/api.js';
+import { appendSearchCriteriaToUrl, authOptions, get, jsonOptions, magentoUrl } from '@src/shop/api/api.js';
 import * as DB from '@src/magento2/database/customer.js';
 import { get_form_body_value } from '@src/shop/api-client/get_form_body_value';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { login_customer } from '@src/shop/api/customer/login';
 
 export default {
     url: '/[store]/api/customer/login/',
@@ -34,41 +35,15 @@ export default {
         if (errors.length > 0) {
             return returnJSON({ message: errors }, 400);
         }
-        // @TODO sanitize email
-        const payload = {
-            username: data.email,
-            password: data.password,
-        };
+
+        const [message, status, token] = await login_customer(store, data.email, data.password, isProd);
 
         const customer = {};
-        const token_url = magentoUrl(`/rest/all/V1/integration/customer/token`);
 
-        // get customer token
-        try {
-            const token_result = await post(
-                token_url,
-                jsonOptions({
-                    body: payload,
-                })
-            );
-            if (!token_result.ok) {
-                Logger.warning(
-                    'magento2 login, customer token request failed',
-                    token_result.status,
-                    token_result.statusText
-                );
-                return returnJSON({ message: login_error }, 403);
-            }
-            let token = token_result.body;
-            if (!token || typeof token != 'string') {
-                Logger.warning('magento2 login, empty or wrong token');
-                return returnJSON({ message: login_error }, 403);
-            }
-            customer.token = token;
-        } catch (e) {
-            Logger.error(get_error_message(e, token_url, 'magento2 login'));
-            return returnJSON({ message: internal_error }, 500);
+        if (!token) {
+            return returnJSON({ message }, status);
         }
+        customer.token = token;
 
         // get customer information
         const admin_token = await get_admin_token(isProd);
