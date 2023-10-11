@@ -17,7 +17,6 @@ export async function update_customer(store, id, data, isProd) {
     if (get_error) {
         return [get_error, undefined];
     }
-    console.log(customer);
 
     let modified = [];
     // update customer values
