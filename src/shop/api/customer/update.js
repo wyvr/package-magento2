@@ -36,6 +36,11 @@ export async function update_customer(store, id, data, isProd) {
             }
         });
     }
+    // add addresses
+    if (Array.isArray(data.customer?.addresses)) {
+        modified.push('addresses');
+        customer.addresses = data.customer.addresses;
+    }
     // avoid update when nothing has changed
     if (modified.length == 0) {
         return [undefined, customer];
@@ -69,26 +74,5 @@ export async function update_customer(store, id, data, isProd) {
         update_result.body.additional = { ...update_result.body.extension_attributes };
         delete update_result.body.extension_attributes;
     }
-    console.log(data);
-    console.log(update_result?.body);
     return [undefined, update_result?.body];
-    // const get_url = magentoUrl(`/rest/all/V1/customers/${id}`);
-
-    // let get_result;
-    // try {
-    //     get_result = await get(get_url, authOptions(admin_token, jsonOptions({})));
-    //     if (!get_result.ok) {
-    //         Logger.warning(
-    //             'magento2 get customer, request failed',
-    //             get_result.status,
-    //             get_result.statusText,
-    //             get_result.body
-    //         );
-    //         return [__('shop.internal_error'), undefined];
-    //     }
-    // } catch (e) {
-    //     Logger.error(get_error_message(e, token_url, 'magento2 get customer'));
-    //     return returnJSON({ message: __('shop.internal_error') }, 500);
-    // }
-    // return [undefined, get_result?.body];
 }
