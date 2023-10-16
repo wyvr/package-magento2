@@ -19,7 +19,7 @@ export async function category_index_update() {
                 delete entry.category.products;
                 return entry.category;
             });
-            let index = build_index(list, store_name, slug, root_category);
+            let index = build_index(list, store_name, store_id, slug, root_category);
             // store raw navigation
             set(store_id + '_index', index);
 
@@ -28,14 +28,16 @@ export async function category_index_update() {
     );
 }
 
-export function build_index(list, store_name, slug, root_category) {
+export function build_index(list, store_name, store_id, slug, root_category) {
     const index = {};
     let cats_to_remove = [];
+    const prefixes = Config.get('magento2.elasticsearch.category_url_prefix');
+    const prefix = prefixes[store_id] || '';
 
     list.forEach((category) => {
         // add url
         if (category.url_path) {
-            category.url = url_join(store_name, slug, category.url_path);
+            category.url = url_join(store_name, slug, category.url_path.replace(prefix, ''));
         } else {
             return;
         }
@@ -56,12 +58,12 @@ export function build_index(list, store_name, slug, root_category) {
         index[category.entity_id] = category;
     });
     // remove the root_categories from the category path
-    if(cats_to_remove.length > 0) {
-        cats_to_remove = cats_to_remove.filter((cur, index, arr) => arr.indexOf(cur) == index)
-        Object.keys(index).forEach((id)=> {
-            index[id].path = index[id].path.filter((id) => cats_to_remove.indexOf(id) == -1)
-        })
+    if (cats_to_remove.length > 0) {
+        cats_to_remove = cats_to_remove.filter((cur, index, arr) => arr.indexOf(cur) == index);
+        Object.keys(index).forEach((id) => {
+            index[id].path = index[id].path.filter((id) => cats_to_remove.indexOf(id) == -1);
+        });
     }
-        
+
     return index;
 }
