@@ -33,6 +33,14 @@ export default {
         }
 
         if (!category) {
+            Logger.error('category not found', request.url, category_data);
+            return await onExec({ data, setStatus });
+        }
+        if (!category.is_active) {
+            Logger.error('category is disabled', request.url, category.entity_id);
+            data.not_found = true;
+            data.avoid_not_found = false;
+            data.force_not_found = true;
             return await onExec({ data, setStatus });
         }
 
@@ -51,8 +59,6 @@ export default {
         if (Array.isArray(cache_data) && cache_data.length > 0) {
             category.products = transform_elasticsearch_products(cache_data[0].products);
         }
-
-        Logger.warning('products in', url, category.products.length);
 
         data.category = category;
         data.timing.assign = new Date().getTime() - start;
