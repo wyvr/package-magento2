@@ -13,7 +13,6 @@ export async function category_index_update() {
         Object.entries(stores).map(async ([store_name, store_id]) => {
             const root_category = typeof root_categories === 'string' ? root_categories : root_categories[store_name];
             const category_data = await load_data(`wyvr_category_${store_id}`, undefined, 1000);
-            //console.log(store_id, category_data);
             const list = category_data.map((entry) => {
                 // remove products
                 delete entry.category.products;

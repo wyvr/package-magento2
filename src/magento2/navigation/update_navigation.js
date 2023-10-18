@@ -11,7 +11,6 @@ export async function update_navigation() {
     await Promise.all(
         Object.entries(stores).map(async ([store_name, store_id]) => {
             const category_data = await load_data(`wyvr_category_${store_id}`, undefined, 1000);
-            //console.log(store_id, category_data);
             const list = category_data.map((entry) => {
                 // remove products
                 delete entry.category.products;

@@ -70,8 +70,6 @@ export async function get_page_by_url(store_id, route) {
     await Promise.all(
         Object.keys(page_data[0].page).map(async (key) => {
             if (key == 'content') {
-                // console.log(route+'content.json');
-                // write(route+'content.json', page_data[0].page[key]);
                 data[key] = await replace_content(page_data[0].page[key], store_id);
                 return undefined;
             }
