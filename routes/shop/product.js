@@ -37,6 +37,15 @@ export default {
         if (!product) {
             return await onExec({ data, setStatus });
         }
+        // 1 enabled
+        // 2 disabled
+        if (product?.status?.value != '1') {
+            Logger.error('product is disabled', data.url, product.entity_id);
+            data.not_found = true;
+            data.avoid_not_found = false;
+            data.force_not_found = true;
+            return await onExec({ data, setStatus });
+        }
 
         // redirect from the simple to the configurable
         if (
