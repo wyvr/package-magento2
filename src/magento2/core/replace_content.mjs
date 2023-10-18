@@ -20,7 +20,6 @@ export async function replace_content(content, store_id) {
 
     replaced_content = await async_replace(replaced_content, /\{\{([^\}]+)\}\}/g, async (_, inner) => {
         const tag_data = parse_tag(inner);
-        console.log(inner)
         if (!tag_data) {
             return '';
         }
