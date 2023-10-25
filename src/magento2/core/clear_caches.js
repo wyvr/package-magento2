@@ -71,14 +71,20 @@ export async function clear_urls(index, data_docs) {
     }
     // delete the docs as soon as possible
     await Promise.all(data_docs.map(async (hit) => await del(index, hit._id)));
-    const stores = Object.keys(get_config('shop.stores', {}));
+    const stores = get_config('shop.stores', {});
     const slug = get_config('shop.slug');
+    const prefixes = get_config('magento2.elasticsearch.category_url_prefix');
 
     // build url of the entry
     const upsert_urls = [];
     data_docs.forEach((hit) => {
-        stores.forEach((store) => {
-            const url = to_index(url_join(store, slug[hit._source.scope], hit._source.id));
+        Object.entries(stores).forEach(([store_name, store_id]) => {
+            const prefix = prefixes[store_id] || '';
+            // remove the prefix for categories
+            const partial_url =
+                prefix && hit._source.scope == 'category' ? hit._source.id.replace(prefix + '/', '') : hit._source.id;
+            const url = to_index(url_join(store_name, slug[hit._source.scope], partial_url));
+
             if (hit._source.type == 'delete') {
                 // delete the generated file directly
                 remove(url_join(ReleasePath.get(), url));
