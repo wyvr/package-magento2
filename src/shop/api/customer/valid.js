@@ -43,8 +43,8 @@ export async function valid(email, token) {
     }
 
     // validate expiration date
-    // @NOTE 60 Minutes * 60 (seconds per minute) * 1000 (milliseconds per second)
-    const valid_minutes = 60 * 60000;
+    // @NOTE 24 Hours *  60 Minutes * 60 (seconds per minute) * 1000 (milliseconds per second)
+    const valid_minutes = 24 * 60 * 60000;
     const valid_until = login_data.created + valid_minutes;
     if (!!login_data.created && valid_until < new Date().getTime()) {
         Logger.error('expired login for customer', email, 'valid until', new Date(valid_until));
