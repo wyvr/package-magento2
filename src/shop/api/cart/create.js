@@ -8,7 +8,7 @@ import { load_cart } from '@src/shop/api/cart/load';
 
 export async function create_cart(store, email, customer_id, isProd) {
     // try load the cart from storage
-    const loaded_cart = await load_cart(email);
+    const [loaded_id, loaded_cart] = await load_cart(email);
     if (loaded_cart) {
         return [undefined, loaded_cart];
     }
@@ -20,31 +20,35 @@ export async function create_cart(store, email, customer_id, isProd) {
     }
     let post_url = magentoUrl(`/rest/all/V1/customers/${customer_id}/carts`);
 
-    let cart_result;
-    try {
-        cart_result = await post(post_url, authOptions(admin_token, {}));
-        if (!cart_result.ok) {
-            Logger.warning(
-                'magento2 create cart, request failed',
-                cart_result.status,
-                cart_result.statusText,
-                cart_result.body
-            );
-            return [__('shop.internal_error'), undefined];
+    let cart = {
+        email,
+        customer_id,
+        id: undefined,
+        valid_until: new Date().getTime() + 60000,
+    };
+    if (loaded_id) {
+        cart.id = loaded_id;
+    } else {
+        let cart_result;
+        try {
+            cart_result = await post(post_url, authOptions(admin_token, {}));
+            if (!cart_result.ok) {
+                Logger.warning(
+                    'magento2 create cart, request failed',
+                    cart_result.status,
+                    cart_result.statusText,
+                    cart_result.body
+                );
+                return [__('shop.internal_error'), undefined];
+            }
+        } catch (e) {
+            Logger.error(get_error_message(e, post_url, 'magento2 create cart'));
+            return returnJSON({ message: __('shop.internal_error') }, 500);
         }
-    } catch (e) {
-        Logger.error(get_error_message(e, post_url, 'magento2 create cart'));
-        return returnJSON({ message: __('shop.internal_error') }, 500);
+        cart.id = cart_result?.body;
     }
 
     // store the current cart in the storage
-    const cart = {
-        email: email,
-        customer_id: customer_id,
-        id: cart_result?.body,
-        // cache for 1 minute (1m*60s*1000ms)
-        valid_until: new Date().getTime() + 60000,
-    };
     try {
         await DB.open();
         await DB.set('cart', email, cart);

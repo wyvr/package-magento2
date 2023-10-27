@@ -16,8 +16,9 @@ export async function load_cart(email) {
     } catch (e) {
         Logger.error(get_error_message(e, import.meta.url, 'magento2 load cart'));
     }
+    const id = loaded_cart?.id;
     if (loaded_cart && loaded_cart.valid_until > new Date().getTime()) {
-        return loaded_cart;
+        return [id, loaded_cart];
     }
-    return undefined;
+    return [id, undefined];
 }
