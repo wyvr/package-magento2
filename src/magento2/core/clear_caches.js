@@ -102,10 +102,8 @@ async function generate_routes(urls) {
         get_logger().info('generate', urls.length, 'routes');
         get_logger().info('route urls', urls);
 
-        await Promise.all(
-            urls.map(async (url) => {
-                return await execute_route(url);
-            })
-        );
+        for (const url of urls) {
+            await execute_route(url);
+        }
     }
 }
