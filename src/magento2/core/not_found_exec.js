@@ -1,6 +1,7 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get } from '@src/shop/core/settings.mjs';
 import { get_page_by_url } from '@src/magento2/core/data.mjs';
+import { object_to_query_param } from '@src/shop/core/url.mjs';
 
 export async function onExec({ data, query, setStatus, returnRedirect, isProd }) {
     // redirect from root to default store when accessed directly
