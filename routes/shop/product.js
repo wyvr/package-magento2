@@ -5,7 +5,7 @@ import { get_error_message } from '@wyvr/generator/src/utils/error.js';
 import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.mjs';
-import { url_join } from '@src/shop/core/url.mjs';
+import { url_join, object_to_query_param } from '@src/shop/core/url.mjs';
 
 const domain = Config.get('url');
 const slug = Config.get('shop.slug.product', 'product');
@@ -13,7 +13,7 @@ const redirect_simple_to_configurable = Config.get('magento2.product.redirect_si
 
 export default {
     url: `/[store]/${slug}/[slug]`,
-    onExec: async ({ params, data, setStatus, returnRedirect, isProd }) => {
+    onExec: async ({ params, query, data, setStatus, returnRedirect, returnJSON, isProd }) => {
         if (!data?.store?.value) {
             Logger.warning('missing data in product', data.url);
             return data;
@@ -57,12 +57,13 @@ export default {
             const configurable_product = product.parent_products.find((product) => product.url_key);
             product.redirect_simple_to_configurable = true;
             const status = isProd ? 301 : 302;
-            const configurable_url = url_join(
-                `https://${domain.replace(/https?:\/\//, '')}`,
-                params.store,
-                slug,
-                configurable_product.url_key
-            );
+            const configurable_url =
+                url_join(
+                    `https://${domain.replace(/https?:\/\//, '')}`,
+                    params.store,
+                    slug,
+                    configurable_product.url_key
+                ) + object_to_query_param(query);
 
             return returnRedirect(configurable_url, status, {
                 'set-cookie': `redirect_from_simple=${params.slug}; path=/${params.store};`,

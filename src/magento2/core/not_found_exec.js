@@ -2,11 +2,11 @@ import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get } from '@src/shop/core/settings.mjs';
 import { get_page_by_url } from '@src/magento2/core/data.mjs';
 
-export async function onExec({ data, setStatus, returnRedirect, isProd }) {
+export async function onExec({ data, query, setStatus, returnRedirect, isProd }) {
     // redirect from root to default store when accessed directly
     const default_store = Config.get('shop.default_store');
     if (data.url == '/' && default_store) {
-        return returnRedirect(`/${default_store}/`, isProd ? 301 : 302);
+        return returnRedirect(`/${default_store}/${object_to_query_param(query)}`, isProd ? 301 : 302);
     }
 
     if (data?.avoid_not_found) {
