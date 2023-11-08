@@ -50,13 +50,19 @@ export default async function () {
         return;
     }
 
+    const default_size = 25;
+    let size = parseInt(get_config('magento2.cache.regenerate_size', default_size), 10);
+    if (isNaN(size)) {
+        size = default_size;
+    }
+
     // search for pages which should be regenerated
     const data = await search({
         index,
         query: {
             match_all: {},
         },
-        size: 25,
+        size,
     });
 
     /**
