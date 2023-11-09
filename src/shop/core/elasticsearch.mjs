@@ -79,9 +79,9 @@ export async function query_data(index, query, size, options, filter_fn) {
         }
         if (!scroll_result._scroll_id || !Array.isArray(scroll_result?.hits?.hits)) {
             Logger.error(
-                `magento2 elasticsearch scroll ended early ${hits.length} of ${total} loaded only ~${Math.round(
-                    (100 / total) * hits.length
-                )}% terminated:${scroll_result.terminated_early}`
+                `magento2 elasticsearch scroll ended early ${hits.length} of ${total} loaded only ~${Math.round((100 / total) * hits.length)}% terminated:${
+                    scroll_result.terminated_early
+                }`
             );
             return hits;
         }
@@ -127,10 +127,26 @@ export async function del(index, id) {
         return false;
     }
 }
+
 export async function del_index(index) {
     const data = { index };
     try {
         await get_client().indices.delete(data);
+        return true;
+    } catch (e) {
+        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        return false;
+    }
+}
+
+export async function clear_index(index) {
+    try {
+        await get_client().deleteByQuery({
+            index,
+            query: {
+                match_all: {},
+            },
+        });
         return true;
     } catch (e) {
         Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
