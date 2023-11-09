@@ -1,7 +1,7 @@
 import { execute_route, execute_page, get_logger, get_config } from '@wyvr/generator/cron.js';
 import { read, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
 import { filled_string, filled_array } from '@wyvr/generator/src/utils/validate.js';
-import { del, exists_index, clear_index } from '@src/shop/core/elasticsearch.mjs';
+import { del, get_client, exists_index, clear_index } from '@src/shop/core/elasticsearch.mjs';
 import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
 import { ReleasePath } from '@wyvr/generator/src/vars/release_path.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
@@ -9,8 +9,20 @@ import { url_join } from '@src/shop/core/url.mjs';
 
 export const index = 'wyvr_clear';
 
+export async function set_clear_marker() {
+    const doc = { scope: '*', id: '*', type: 'clear' };
+    const base = { id: '*', index };
+    const client = get_client();
+    const exists = await client.exists(base);
+    if (!exists) {
+        base.document = doc;
+        await client.create(base);
+    }
+}
+
 /**
  * Clear all urls that are known to be generated
+ * WARNING: this method only works in an cronjob
  * @param {string} index elasticsearch index name
  * @returns {void}
  */
