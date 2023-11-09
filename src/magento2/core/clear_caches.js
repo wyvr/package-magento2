@@ -1,7 +1,7 @@
 import { execute_route, execute_page, get_logger, get_config } from '@wyvr/generator/cron.js';
 import { read, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
 import { filled_string, filled_array } from '@wyvr/generator/src/utils/validate.js';
-import { del, del_index, exists_index } from '@src/shop/core/elasticsearch.mjs';
+import { del, exists_index, clear_index } from '@src/shop/core/elasticsearch.mjs';
 import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
 import { ReleasePath } from '@wyvr/generator/src/vars/release_path.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
@@ -26,7 +26,7 @@ export async function clear_all_urls(index) {
     // delete the whole index as soon as possible
     const index_exists = await exists_index(index);
     if (index_exists) {
-        await del_index(index);
+        await clear_index(index);
     }
     get_logger().warning('clear whole cache');
     // remove all generated routes when the generation should be cleared
@@ -81,8 +81,7 @@ export async function clear_urls(index, data_docs) {
         Object.entries(stores).forEach(([store_name, store_id]) => {
             const prefix = prefixes[store_id] || '';
             // remove the prefix for categories
-            const partial_url =
-                prefix && hit._source.scope == 'category' ? hit._source.id.replace(prefix + '/', '') : hit._source.id;
+            const partial_url = prefix && hit._source.scope == 'category' ? hit._source.id.replace(prefix + '/', '') : hit._source.id;
             const url = to_index(url_join(store_name, slug[hit._source.scope], partial_url));
 
             if (hit._source.type == 'delete') {
