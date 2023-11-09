@@ -56,11 +56,9 @@ export async function clear_all_urls(index) {
     if (pages && pages.length > 0) {
         get_logger().info('generate', pages.length, 'pages');
         get_logger().debug('page urls', pages);
-        await Promise.all(
-            pages.map(async (url) => {
-                return await execute_page(url);
-            })
-        );
+        for (const url of pages) {
+            await execute_page(url);
+        }
     } else {
         get_logger().info('no pages to rebuild');
     }
