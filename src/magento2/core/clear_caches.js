@@ -1,5 +1,5 @@
 import { execute_route, execute_page, get_logger, get_config } from '@wyvr/generator/cron.js';
-import { read, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
+import { read, write, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
 import { filled_string, filled_array } from '@wyvr/generator/src/utils/validate.js';
 import { del, get_client, exists_index, clear_index } from '@src/shop/core/elasticsearch.mjs';
 import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
@@ -31,7 +31,16 @@ export async function clear_all_urls(index) {
         get_logger().error('no elasticsearch index was provided');
         return;
     }
-    const routes = uniq_values(read(Cwd.get('cache', 'routes_persisted.txt'))?.split('\n').filter(Boolean));
+    const routes_persisted_path = Cwd.get('cache', 'routes_persisted.txt');
+    const routes_persisted_total_path = Cwd.get('cache', 'routes_persisted_total.txt');
+
+    const routes = read(routes_persisted_path)?.split('\n') || [];
+    // remove all generated routes when the generation should be cleared
+    remove(routes_persisted_path);
+    const prev_routes = read(routes_persisted_total_path)?.split('\n') || [];
+    const total_routes = uniq_values(prev_routes.concat(routes)).filter(Boolean);
+    write(routes_persisted_total_path, total_routes.join('\n'));
+
     const pages = read_json(Cwd.get('cache', 'page_cache.json'))
         ?.map((page) => to_index(page.urls.find(Boolean)))
         .filter(Boolean);
@@ -41,11 +50,9 @@ export async function clear_all_urls(index) {
         await clear_index(index);
     }
     get_logger().warning('clear whole cache');
-    // remove all generated routes when the generation should be cleared
-    remove(Cwd.get('cache', 'routes_persisted.txt'));
-    if (routes && routes.length > 0) {
-        get_logger().info('clear', routes.length, 'generated routes');
-        routes.forEach((file) => {
+    if (total_routes && total_routes.length > 0) {
+        get_logger().info('clear', total_routes.length, 'generated routes');
+        total_routes.forEach((file) => {
             remove(url_join(ReleasePath.get(), file));
         });
     } else {
