@@ -6,6 +6,8 @@ import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
 import { ReleasePath } from '@wyvr/generator/src/vars/release_path.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
 import { url_join } from '@src/shop/core/url.mjs';
+import { WorkerController } from '@wyvr/generator/src/worker/controller.js';
+import { join } from 'path';
 
 export const index = 'wyvr_clear';
 
@@ -88,10 +90,11 @@ export async function clear_urls(index, data_docs) {
     }
     // delete the docs as soon as possible
     await Promise.all(data_docs.map(async (hit) => await del(index, hit._id)));
+    
     const stores = get_config('shop.stores', {});
     const slug = get_config('shop.slug');
     const prefixes = get_config('magento2.elasticsearch.category_url_prefix');
-
+    
     // build url of the entry
     const upsert_urls = [];
     data_docs.forEach((hit) => {
@@ -115,11 +118,50 @@ export async function clear_urls(index, data_docs) {
 
 async function generate_routes(urls) {
     if (urls && urls.length > 0) {
+        const domain = 'https://' + get_config('url');
+        const chunk_size = Math.round(WorkerController.get_cpu_cores() / 3);
+        const chunks = get_chunks(urls, chunk_size);
+        const release_path = ReleasePath.get();
+        // process urls in chunks
         get_logger().info('generate', urls.length, 'routes');
-        get_logger().info('route urls', urls);
-
-        for (const url of urls) {
-            await execute_route(url);
+        for (let i = 0, len = chunks.length; i < len; i++) {
+            get_logger().info('generate chunk', i + 1, 'of', len);
+            const chunk = chunks[i];
+            await Promise.all(
+                chunk.map(async (url) => {
+                    // delete before the route is requested
+                    remove(join(release_path, url));
+                    const [error, ok] = await trigger_url(url_join(domain, url));
+                    if(error) {
+                        get_logger().error('error triggering', url, error);
+                    }
+                    return ok;
+                })
+            );
         }
+        get_logger().info('done', urls.length, 'routes');
     }
+}
+
+export async function trigger_url(url) {
+    try {
+        const response = await fetch(url, {
+            cache: 'no-cache',
+        });
+
+        return [undefined, response.ok];
+    } catch (e) {
+        return [e, false];
+    }
+}
+
+export function get_chunks(array, chunk_size = 10) {
+    const chunks = [];
+    if (!Array.isArray(array)) {
+        return chunks;
+    }
+    for (let i = 0, len = array.length; i < len; i += chunk_size) {
+        chunks.push(array.slice(i, i + chunk_size));
+    }
+    return chunks;
 }
