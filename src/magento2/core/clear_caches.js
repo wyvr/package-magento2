@@ -116,7 +116,7 @@ export async function clear_urls(index, data_docs) {
     await generate_routes(upsert_urls);
 }
 
-async function generate_routes(urls) {
+export async function generate_routes(urls) {
     if (urls && urls.length > 0) {
         const domain = 'https://' + get_config('url');
         const chunk_size = Math.round(WorkerController.get_cpu_cores() / 3);
