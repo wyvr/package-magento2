@@ -23,7 +23,7 @@ export default {
 
         const magento_data = await get_magento_data(data.url);
         // to increase the cache lifetime add minutes to the timestamp
-        magento_data.created = timestamp + 5; // cache for ~5min
+        magento_data.created = timestamp + 1; // cache for ~1min
 
         const query = get_product_sku_query(magento_data?.store?.value, params.sku);
 
