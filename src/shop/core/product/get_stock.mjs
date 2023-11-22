@@ -4,6 +4,7 @@ import { default_stock } from '@src/shop/core/product/default_stock.mjs';
 export function get_stock(product) {
     // get stock of product itself
     const stock = get_single_stock(product);
+
     // configurables does not have a stock themself, so get the stock from the variants
     if (product?.type_id == 'configurable' && product?.configurable_products) {
         const child_stocks = product.configurable_products.map((child) => get_single_stock(child)).filter(Boolean);
