@@ -16,8 +16,8 @@ export default {
 
         if (isProd) {
             const cache = get_cache(data.url);
-            if (cache && cache.created >= timestamp) {
-                return returnJSON(cache);
+            if (cache && cache.created > timestamp) {
+                return returnJSON(cache.product);
             }
         }
 
@@ -38,7 +38,7 @@ export default {
             return returnJSON(undefined, 404);
         }
         if (isProd) {
-            set_cache(data.url, product._source.product);
+            set_cache(data.url, { created: magento_data.created, product: product._source.product });
         }
         return returnJSON(product._source.product);
     },
