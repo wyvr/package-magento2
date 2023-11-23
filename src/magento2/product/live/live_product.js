@@ -22,7 +22,7 @@ function createLiveProduct() {
         }
         cache[sku] = data;
         if (subscribers[sku].length > 0) {
-            subscribers[sku].forEach((s) => s(data));
+            subscribers[sku].forEach((s) => s(data, sku));
         }
     };
 
@@ -38,7 +38,7 @@ function createLiveProduct() {
             subscribers[sku].push(listener);
             // when value was already there return it instant
             if (cache[sku]) {
-                listener(cache[sku]);
+                listener(cache[sku], sku);
             } else {
                 // when the entry is undefined, start loading
                 if (cache[sku] === undefined) {
