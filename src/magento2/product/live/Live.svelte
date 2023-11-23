@@ -50,26 +50,35 @@
         const clone = { ...product };
         Object.entries(data).forEach(([attribute, value]) => {
             // check if the given attribute has a property value, then replace the value
-            if (
-                typeof clone[attribute] == 'object' &&
-                clone[attribute]?.value !== undefined
-            ) {
-                clone[attribute].value = value;
-            }
+            clone[attribute] = update_attribute(clone[attribute], value);
+
             // stock mus also be injected into quantity_and_stock_status
             if (attribute == 'stock' && clone.quantity_and_stock_status) {
-                if (
-                    typeof clone.quantity_and_stock_status == 'object' &&
-                    clone.quantity_and_stock_status?.value !== undefined
-                ) {
-                    clone.quantity_and_stock_status.value = value;
-                } else {
-                    clone.quantity_and_stock_status = value;
-                }
+                clone.quantity_and_stock_status = update_attribute(clone.quantity_and_stock_status, value);
             }
         });
+        // correct final_price
+        let final_price = get_attribute_value(product, 'final_price');
+        if (final_price && typeof final_price == 'string') {
+            final_price = parseFloat(final_price);
+        }
+        const special_price = data.special_price;
+        if (special_price && special_price < final_price) {
+            clone.final_price = update_attribute(clone.final_price, special_price);
+        }
         loaded = true;
         return clone;
+    }
+
+    function update_attribute(item, value) {
+        if (!item) {
+            return value;
+        }
+        if (typeof item == 'object' && item?.value !== undefined) {
+            item.value = value;
+            return item;
+        }
+        return value;
     }
 </script>
 
