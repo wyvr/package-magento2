@@ -14,11 +14,9 @@ export default {
     },
     onExec: async ({ params, data, returnJSON, isProd }) => {
         const timestamp = get_time_stamp_seconds();
-        if (isProd) {
-            const cache = get_cache(data.url);
-            if (cache && cache.created > timestamp) {
-                return returnJSON(cache.updated);
-            }
+        const cache = get_cache(data.url);
+        if (cache && cache.created > timestamp) {
+            return returnJSON(cache.updated);
         }
         // to increase the cache lifetime add minutes to the timestamp
         const created = timestamp + 30; // cache for ~30sec
@@ -96,9 +94,7 @@ export default {
             await sleep_random(100, 200);
             return returnJSON({ message: __('shop.internal_error') }, 500);
         }
-        if (isProd) {
-            set_cache(data.url, { created, updated });
-        }
+        set_cache(data.url, { created, updated });
         return returnJSON(updated);
     },
 };
