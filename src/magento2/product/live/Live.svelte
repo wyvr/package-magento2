@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import { get_attribute_value } from '@src/shop/core/attributes.mjs';
     import { liveProduct } from '@src/magento2/product/live/live_product';
     wyvr: {
@@ -8,6 +8,8 @@
     }
 
     export let product;
+
+    const dispatcher = createEventDispatcher();
 
     let enabled = false;
     let loaded = false;
@@ -39,6 +41,7 @@
         unsubscribe = liveProduct.subscribe(sku, (data) => {
             if (data) {
                 final_product = update_product(product, data);
+                dispatcher('update', { product: final_product, sku });
             }
         });
     }
@@ -66,7 +69,7 @@
         if (special_price && special_price < final_price) {
             clone.final_price = update_attribute(clone.final_price, special_price);
         } else {
-            if(data.price) {
+            if (data.price) {
                 clone.final_price = update_attribute(clone.final_price, data.price);
             }
         }
