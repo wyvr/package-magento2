@@ -65,6 +65,10 @@
         const special_price = data.special_price;
         if (special_price && special_price < final_price) {
             clone.final_price = update_attribute(clone.final_price, special_price);
+        } else {
+            if(data.price) {
+                clone.final_price = update_attribute(clone.final_price, data.price);
+            }
         }
         loaded = true;
         return clone;
