@@ -3,6 +3,9 @@ import { get } from '@src/shop/core/settings.mjs';
 import { replace_content } from '@src/magento2/core/replace_content.mjs';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 
+const locale_cache = {};
+const currency_cache = {};
+
 export async function get_magento_data(url) {
     const data = {
         date: new Date(),
@@ -27,10 +30,18 @@ export async function get_magento_data(url) {
         return data;
     }
 
-    const code = await get(store_id, 'general.locale.code', message, 'en_US');
-    data.locale = code.split('_')[0];
+    // try load locale from cache
+    if (!locale_cache[store_id]) {
+        const code = await get(store_id, 'general.locale.code', message, 'en_US');
+        locale_cache[store_id] = code.split('_')[0];
+    }
+    data.locale = locale_cache[store_id];
 
-    data.currency = await get(store_id, 'currency.options.default', message, 'EUR');
+    // try load currency from cache
+    if (!currency_cache[store_id]) {
+        currency_cache[store_id] = await get(store_id, 'currency.options.default', message, 'EUR');
+    }
+    data.currency = currency_cache[store_id]
     return data;
 }
 export function get_store_key(url) {
