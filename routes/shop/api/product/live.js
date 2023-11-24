@@ -19,7 +19,7 @@ export default {
             return returnJSON(cache.updated);
         }
         // to increase the cache lifetime add minutes to the timestamp
-        const created = timestamp + 30; // cache for ~30sec
+        const created = timestamp + 10; // cache for ~10sec
 
         const admin_token = await get_admin_token(isProd);
         if (!admin_token) {
