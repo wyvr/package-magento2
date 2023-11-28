@@ -55,7 +55,7 @@ export async function query_data(index, query, size, options, filter_fn) {
         try {
             hits = result?.hits?.hits.map((x) => x._source).filter(filter_fn);
         } catch (e) {
-            Logger.error(term, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
+            Logger.error(query, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
         }
     }
     let scroll_id = result._scroll_id;
