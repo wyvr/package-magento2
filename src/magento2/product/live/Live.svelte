@@ -17,13 +17,13 @@
     let sku;
     let unsubscribe;
 
-    $: switch_product(product);
+    // $: switch_product(product);
 
-    onMount(() => {
-        // enabled is required to active the loading of the product
-        enabled = true;
-        switch_product(product);
-    });
+    // onMount(() => {
+    //     // enabled is required to active the loading of the product
+    //     enabled = true;
+    //     switch_product(product);
+    // });
 
     function switch_product(product) {
         sku = get_attribute_value(product, 'sku');
@@ -90,5 +90,5 @@
 </script>
 
 <div class="live" class:enabled class:loaded>
-    <slot product={final_product} />
+    <slot {product} />
 </div>
