@@ -1,66 +1,43 @@
-import { Config } from '@wyvr/generator/src/utils/config.js';
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { get_config, get_logger } from '@wyvr/generator/cron.js';
 import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
-import { transform_elasticsearch_products } from '@src/magento2/core/transform_elasticsearch_products.js';
+import { load_category_by_slug } from '@src/magento2/category/load_category_by_slug.js';
+import { load_category_products } from '@src/magento2/category/load_category_products.js';
 
-const slug = Config.get('shop.slug.category', 'category');
+const slug = get_config('shop.slug.category', 'category');
 export default {
     url: `/[store]/${slug}/[slug]`,
     onExec: async ({ request, params, data, setStatus }) => {
         if (!data?.store?.value) {
-            Logger.warning('missing store id in category', data.url);
+            get_logger().warning('missing store id in category', data.url);
             return data;
         }
-        let start = new Date().getTime();
+
         const store_id = data.store.value;
 
-        const category_url_prefix = Config.get('magento2.elasticsearch.category_url_prefix', {});
-        const url = category_url_prefix[store_id] ? `${category_url_prefix[store_id]}/${params.slug}` : params.slug;
+        const [category_error, category] = await load_category_by_slug(params.slug, store_id);
 
-        const category_data = await load_data(`wyvr_category_${store_id}`, { url });
-        if (!category_data) {
-            Logger.warning('no category data found for', url);
+        if (category_error) {
+            get_logger().error(category_error);
             return await onExec({ data, setStatus });
         }
-        let category;
-        if (Array.isArray(category_data) && category_data.length > 0 && category_data[0].category) {
-            category = category_data[0].category;
-        } else {
-            Logger.error('category not found', request.url, category_data);
-        }
 
-        if (!category) {
-            Logger.error('category not found', request.url, category_data);
-            return await onExec({ data, setStatus });
-        }
         if (!category.is_active) {
-            Logger.error('category is disabled', request.url, category.entity_id);
+            get_logger().error('category is disabled', request.url, category.entity_id);
             data.not_found = true;
             data.avoid_not_found = false;
             data.force_not_found = true;
             return await onExec({ data, setStatus });
         }
 
-        data.timing = { category: new Date().getTime() - start };
-
-        start = new Date().getTime();
-        const index_name = `wyvr_cache_${store_id}`;
-
-        const cache_data = await load_data(index_name, { id: category.entity_id });
-
-        data.timing.products = new Date().getTime() - start;
-        start = new Date().getTime();
-
         category.products = [];
 
-        if (Array.isArray(cache_data) && cache_data.length > 0) {
-            category.products = transform_elasticsearch_products(cache_data[0].products);
+        const [products_error, products] = await load_category_products(category.entity_id, store_id);
+        if (!products_error) {
+            category.products = products;
         }
 
         data.category = category;
-        data.timing.assign = new Date().getTime() - start;
 
         return data;
     },
@@ -89,12 +66,7 @@ export default {
             })
             .reverse();
 
-        result.template = [
-            `shop/category/id/${data.category.entity_id}`,
-            `shop/category/slug/${params.slug}`,
-            ...path,
-            ...result.template,
-        ];
+        result.template = [`shop/category/id/${data.category.entity_id}`, `shop/category/slug/${params.slug}`, ...path, ...result.template];
 
         return result;
     },
