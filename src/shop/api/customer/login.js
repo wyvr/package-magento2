@@ -8,29 +8,25 @@ export async function login_customer(store, email, password, isProd) {
     // @TODO sanitize email
     const payload = {
         username: email,
-        password: password,
+        password: password
     };
 
-    const token_url = magentoUrl(`/rest/all/V1/integration/customer/token`);
+    const token_url = magentoUrl('/rest/all/V1/integration/customer/token');
 
     // get customer token
     try {
         const token_result = await post(
             token_url,
             jsonOptions({
-                body: payload,
+                body: payload
             })
         );
         if (!token_result.ok) {
-            Logger.warning(
-                'magento2 login, customer token request failed',
-                token_result.status,
-                token_result.statusText
-            );
+            Logger.warning('magento2 login, customer token request failed', token_result.status, token_result.statusText);
             return [login_error, 403, undefined];
         }
-        let token = token_result.body;
-        if (!token || typeof token != 'string') {
+        const token = token_result.body;
+        if (!token || typeof token !== 'string') {
             Logger.warning('magento2 login, empty or wrong token');
             return [login_error, 403, undefined];
         }

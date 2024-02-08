@@ -39,12 +39,7 @@ export async function change_password(store, id, email, data, isProd) {
         if (!password_result.ok) {
             const message = replaceParameters(password_result?.body);
             if (!message) {
-                Logger.warning(
-                    'magento2 change password, request failed',
-                    password_result.status,
-                    password_result.statusText,
-                    password_result.body
-                );
+                Logger.warning('magento2 change password, request failed', password_result.status, password_result.statusText, password_result.body);
                 return [save_error, undefined];
             }
             return [message, undefined];

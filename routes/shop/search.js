@@ -9,10 +9,10 @@ export default {
         const store_id = stores[params.store];
         const date = new Date();
 
-        const code = await get(store_id, 'general.locale.code', `magento 2 search`, 'en_US');
+        const code = await get(store_id, 'general.locale.code', "magento 2 search", 'en_US');
         const locale = code.split('_')[0];
 
-        const currency = await get(store_id, 'currency.options.default', `magento 2 search`, 'EUR');
+        const currency = await get(store_id, 'currency.options.default', "magento 2 search", 'EUR');
 
         const size = 12;
         const search_result = await search_execute(query.q, store_id, size);
@@ -20,7 +20,7 @@ export default {
         return {
             store: {
                 key: params.store,
-                value: stores[params.store],
+                value: stores[params.store]
             },
             stores,
             date,
@@ -36,14 +36,14 @@ export default {
         return {
             ...(data?._wyvr ?? {}),
             ...{
-                template: [`shop/Search`, 'shop/Default'],
+                template: ["shop/Search", 'shop/Default'],
                 methods: ['get', 'post'],
-                persist: false,
-            },
+                persist: false
+            }
         };
     },
     title: () => __('search.search'),
     content: ({ data }) => {
-        return '<pre>' + JSON.stringify(data, null, 4) + '</pre>';
-    },
+        return `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+    }
 };

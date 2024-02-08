@@ -22,7 +22,7 @@ async function update_item(url, cart, sku, qty, is_prod) {
     const cart_item = {
         sku,
         qty,
-        quote_id: cart.cart_id,
+        quote_id: cart.cart_id
     };
     const item_id = cart.items.find((item) => item.sku === sku)?.item_id;
     if (item_id) {
@@ -39,8 +39,8 @@ async function update_item(url, cart, sku, qty, is_prod) {
                     admin_token,
                     jsonOptions({
                         body: {
-                            cart_item,
-                        },
+                            cart_item
+                        }
                     })
                 )
             );

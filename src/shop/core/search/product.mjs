@@ -20,19 +20,19 @@ export function get_product_query(store_id, term = '', size = 1000) {
                       search: {
                           query: term,
                           fuzziness: 0,
-                          boost: 10,
-                      },
-                  },
+                          boost: 10
+                      }
+                  }
               },
               {
                   match: {
                       search: {
                           query: term,
                           fuzziness: 1,
-                          boost: 1,
-                      },
-                  },
-              },
+                          boost: 1
+                      }
+                  }
+              }
           ]
         : [];
     const product_query = {
@@ -42,25 +42,25 @@ export function get_product_query(store_id, term = '', size = 1000) {
             bool: {
                 must: {
                     dis_max: {
-                        queries: [].concat(term_query),
-                    },
+                        queries: [].concat(term_query)
+                    }
                 },
-                filter: [{ terms: { visibility: [VISIBILITY_IN_SEARCH, VISIBILITY_BOTH] } }],
-            },
-        },
+                filter: [{ terms: { visibility: [VISIBILITY_IN_SEARCH, VISIBILITY_BOTH] } }]
+            }
+        }
     };
-    
+
     if (term) {
         product_query.suggest = {
             text: term,
             suggestion: {
                 term: {
-                    field: 'search',
-                },
+                    field: 'search'
+                }
                 // phrase: {
                 //     field: 'search',
                 // },
-            },
+            }
         };
     }
     return product_query;
@@ -71,14 +71,14 @@ export function get_catalog_products_query(store_id, size = 10000, query = undef
         size,
         query: {
             bool: {
-                filter: [{ terms: { visibility: [VISIBILITY_IN_CATALOG, VISIBILITY_BOTH] } }],
-            },
-        },
+                filter: [{ terms: { visibility: [VISIBILITY_IN_CATALOG, VISIBILITY_BOTH] } }]
+            }
+        }
     };
-    if(query) {
+    if (query) {
         product_query.query = Object.assign({}, product_query.query, query);
     }
-    if(sort) {
+    if (sort) {
         product_query.sort = sort;
     }
     return product_query;
@@ -89,8 +89,8 @@ export function get_product_id_query(store_id, id) {
         index: get_product_index_name(store_id),
         size: 1,
         query: {
-            match: { id: { query: id } },
-        },
+            match: { id: { query: id } }
+        }
     };
 }
 export function get_product_sku_query(store_id, sku) {
@@ -98,7 +98,7 @@ export function get_product_sku_query(store_id, sku) {
         index: get_product_index_name(store_id),
         size: 1,
         query: {
-            match: { sku: sku.toLowerCase() },
-        },
+            match: { sku: sku.toLowerCase() }
+        }
     };
 }

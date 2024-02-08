@@ -8,19 +8,19 @@ export async function append_cms_page(url, store_id, append_to) {
     if (page_parts) {
         const page_data = await get_page_by_url(store_id, page_parts[1]);
 
-        if (Object.keys(page_data).length == 0) {
+        if (Object.keys(page_data).length === 0) {
             return append_to;
         }
         append_to.avoid_not_found = true;
 
-        Object.keys(page_data).forEach((key) => {
+        for (const key of Object.keys(page_data)) {
             append_to[key] = page_data[key];
-        });
+        }
 
         append_to._wyvr = {
-            template: [`shop/page/${page_parts[1]}`, `shop/Page`, 'shop/Default'],
+            template: [`shop/page/${page_parts[1]}`, 'shop/Page', 'shop/Default'],
             persist: true,
-            language: append_to.locale || 'en',
+            language: append_to.locale || 'en'
         };
     }
     return append_to;

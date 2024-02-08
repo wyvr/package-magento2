@@ -8,7 +8,7 @@ export default {
     url: '/[store]/api/product/get/[sku]',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ params, data, returnJSON, isProd }) => {
@@ -38,8 +38,11 @@ export default {
             return returnJSON(undefined, 404);
         }
         if (isProd) {
-            set_cache(data.url, { created: magento_data.created, product: product._source.product });
+            set_cache(data.url, {
+                created: magento_data.created,
+                product: product._source.product
+            });
         }
         return returnJSON(product._source.product);
-    },
+    }
 };

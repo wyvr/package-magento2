@@ -8,20 +8,15 @@ export async function get_orders(store, email, isProd) {
         Logger.error('magento2 get orders, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
-    const get_url = appendSearchCriteriaToUrl(magentoUrl(`/rest/all/V1/orders/`), {
+    const get_url = appendSearchCriteriaToUrl(magentoUrl('/rest/all/V1/orders/'), {
         filter: [{ field: 'customer_email', conditionType: 'eq', value: email }],
-        sort: [{ field: 'entity_id', direction: 'DESC' }],
+        sort: [{ field: 'entity_id', direction: 'DESC' }]
     });
     let get_result;
     try {
         get_result = await get(get_url, authOptions(admin_token, jsonOptions({})));
         if (!get_result.ok) {
-            Logger.warning(
-                'magento2 get orders, request failed',
-                get_result.status,
-                get_result.statusText,
-                get_result.body
-            );
+            Logger.warning('magento2 get orders, request failed', get_result.status, get_result.statusText, get_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {

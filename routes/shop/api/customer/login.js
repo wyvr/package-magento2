@@ -11,7 +11,7 @@ export default {
     url: '/[store]/api/customer/login/',
     _wyvr: () => {
         return {
-            methods: ['post'],
+            methods: ['post']
         };
     },
     onExec: async ({ params, returnJSON, setStatus, body, isProd }) => {
@@ -22,16 +22,16 @@ export default {
         const store = params?.store;
         const errors = [];
 
-        ['email', 'password'].forEach((field) => {
+        for (const field of ['email', 'password']) {
             const value = get_form_body_value(body[field]);
             const name = field.trim().toLowerCase();
 
             if (!value) {
-                errors.push(__('shop.missing_required_field', { name: __('customer.' + name) }));
-                return;
+                errors.push(__('shop.missing_required_field', { name: __(`customer.${name}`) }));
+                continue;
             }
             data[field] = value;
-        });
+        }
         if (errors.length > 0) {
             return returnJSON({ message: errors }, 400);
         }
@@ -48,9 +48,9 @@ export default {
         // get customer information
         const admin_token = await get_admin_token(isProd);
         if (admin_token) {
-            const customer_url = appendSearchCriteriaToUrl(magentoUrl(`/rest/all/V1/customers/search`), {
+            const customer_url = appendSearchCriteriaToUrl(magentoUrl('/rest/all/V1/customers/search'), {
                 filter: [{ field: 'email', conditionType: 'eq', value: email }],
-                pageSize: 1,
+                pageSize: 1
             });
             let customers;
             try {
@@ -62,30 +62,25 @@ export default {
                 Logger.error(get_error_message(e, customer_url, 'magento2 login'));
                 return returnJSON({ message: internal_error }, 500);
             }
-            if (!customers || !Array.isArray(customers) || customers.length == 0) {
+            if (!customers || !Array.isArray(customers) || customers.length === 0) {
                 Logger.warning('magento2 login, no customer found');
                 return returnJSON({ message: login_error }, 403);
             }
-            customer.email = customers[0].email;
-            customer.id = customers[0].id;
-            customer.firstname = customers[0].firstname;
-            customer.lastname = customers[0].lastname;
-            customer.store_id = customers[0].store_id;
-            customer.website_id = customers[0].website_id;
-            customer.additional = customers[0].extension_attributes;
-            customer.addresses = customers[0].addresses;
 
+            for (const key of ['email', 'id', 'firstname', 'lastname', 'store_id', 'website_id', 'extension_attributes', 'addresses']) {
+                customer[key === 'extension_attributes' ? 'additional' : key] = customers[0][key];
+            }
             // store the current login in the storage
             await DB.open();
             await DB.set('login', customers[0].email, {
                 email: customers[0].email,
                 id: customers[0].id,
                 token: customer.token,
-                created: new Date().getTime(),
+                created: new Date().getTime()
             });
             await DB.close();
         }
 
         return returnJSON(customer);
-    },
+    }
 };

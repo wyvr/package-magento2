@@ -4,7 +4,7 @@ export default {
     url: '/[store]/api/customer/valid/[email]/',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ params, returnJSON, headers }) => {
@@ -13,5 +13,5 @@ export default {
             return returnJSON({ message: error }, 403);
         }
         return returnJSON(customer);
-    },
+    }
 };

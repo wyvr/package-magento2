@@ -16,7 +16,11 @@ export async function replace_content(content, store_id) {
 
     // modifications to avoid svelte compile errors
     // @TODO the curly braces causes massive errros in svelte
-    let replaced_content = content.replace(/\{\}/g, '').replace(/\{\\&quot;/g, '(\'').replace(/\\&quot;\}/g, '\')').replace(/\\&quot;/g, '\'');
+    let replaced_content = content
+        .replace(/\{\}/g, '')
+        .replace(/\{\\&quot;/g, "('")
+        .replace(/\\&quot;\}/g, "')")
+        .replace(/\\&quot;/g, "'");
 
     replaced_content = await async_replace(replaced_content, /\{\{([^\}]+)\}\}/g, async (_, inner) => {
         const tag_data = parse_tag(inner);
@@ -30,7 +34,7 @@ export async function replace_content(content, store_id) {
                     return `/${store_key}/${data.url}`;
                 }
                 break;
-            case 'widget':
+            case 'widget': {
                 let path = 'magento2/widget/Default';
                 const possible_templates = [path];
                 let props = data;
@@ -38,7 +42,7 @@ export async function replace_content(content, store_id) {
                     .split('\\')
                     .reverse()
                     .map((value, index) => {
-                        if (index == 0) {
+                        if (index === 0) {
                             return value;
                         }
                         return value.toLowerCase();
@@ -46,18 +50,16 @@ export async function replace_content(content, store_id) {
                     .reverse()
                     .join('/');
                 const type_path = `magento2/widget/${type_path_parts}`;
-                if (exists(Cwd.get(FOLDER_GEN_SRC, type_path + '.svelte'))) {
+                if (exists(Cwd.get(FOLDER_GEN_SRC, `${type_path}.svelte`))) {
                     path = type_path;
                 }
 
                 if (data.block_id !== undefined) {
                     const block = await get_block_by_id(store_id, data.block_id);
-                    let block_tag = block.identifier
-                        .replace(/^(\w)/, (_, char) => char.toUpperCase())
-                        .replace(/-+(\w)/g, (_, char) => char.toUpperCase());
+                    const block_tag = block.identifier.replace(/^(\w)/, (_, char) => char.toUpperCase()).replace(/-+(\w)/g, (_, char) => char.toUpperCase());
                     const block_path = `magento2/widget/${block_tag}`;
                     possible_templates.push(block_path);
-                    if (exists(Cwd.get(FOLDER_GEN_SRC, block_path + '.svelte'))) {
+                    if (exists(Cwd.get(FOLDER_GEN_SRC, `${block_path}.svelte`))) {
                         path = block_path;
                     }
                     props = block;
@@ -67,8 +69,8 @@ export async function replace_content(content, store_id) {
                         .replace(/^widget\//, '')
                         .replace(/^[^:]+::/, '')}`;
                     possible_templates.push(new_template);
-                    data.template = new_template + '.svelte';
-                    if (exists(Cwd.get(FOLDER_GEN_SRC, new_template + '.svelte'))) {
+                    data.template = `${new_template}.svelte`;
+                    if (exists(Cwd.get(FOLDER_GEN_SRC, data.template))) {
                         path = new_template;
                     }
                 }
@@ -77,13 +79,15 @@ export async function replace_content(content, store_id) {
                 return `((${path} ${Object.keys(props)
                     .map((key) => `${key}={${JSON.stringify(props[key])}}`)
                     .join(' ')} store_id={${JSON.stringify(store_id)}} store_key={${JSON.stringify(store_key)}}))`;
-            case 'config':
+            }
+            case 'config': {
                 const value = await get(store_id, data.path, 'content');
                 if (value !== undefined) {
                     return value;
                 }
                 Logger.warning('replace content unknown config path', data.path, 'for store', store_key);
                 return '';
+            }
             case 'media':
                 if (data.url) {
                     // magento sometimes add ".renditions" to the path, remove it because it is not needed to access the image and cause troubles in nginx because of the hidden folder

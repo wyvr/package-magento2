@@ -22,13 +22,15 @@ function createLiveProduct() {
         }
         cache[sku] = data;
         if (subscribers[sku].length > 0) {
-            subscribers[sku].forEach((s) => s(data, sku));
+            for (const s of subscribers[sku]) {
+                s(data, sku);
+            }
         }
     };
 
     store = {
         subscribe: (sku, listener) => {
-            if (!sku || typeof listener != 'function') {
+            if (!sku || typeof listener !== 'function') {
                 return;
             }
             // store the listeners based on the sku
@@ -44,7 +46,7 @@ function createLiveProduct() {
                 if (cache[sku] === undefined) {
                     cache[sku] = false;
                     load_live_product(sku).then(([error, data]) => {
-                        if(error) {
+                        if (error) {
                             console.warn(error);
                             return;
                         }
@@ -59,7 +61,7 @@ function createLiveProduct() {
                     subscribers[sku].splice(index, 1);
                 }
             };
-        },
+        }
     };
     return setSharedStore(live_name, store);
 }

@@ -18,36 +18,36 @@ export function get_category_query(store_id, term, size) {
                                     search: {
                                         query: term,
                                         fuzziness: 0,
-                                        boost: 10,
-                                    },
-                                },
+                                        boost: 10
+                                    }
+                                }
                             },
                             {
                                 match: {
                                     search: {
                                         query: term,
                                         fuzziness: 1,
-                                        boost: 1,
-                                    },
-                                },
-                            },
-                        ],
-                    },
+                                        boost: 1
+                                    }
+                                }
+                            }
+                        ]
+                    }
                 },
-                filter: [{ terms: { is_active: [true] } }],
-            },
+                filter: [{ terms: { is_active: [true] } }]
+            }
         },
         suggest: {
             text: term,
             suggestion: {
                 term: {
-                    field: 'search',
-                },
+                    field: 'search'
+                }
                 // phrase: {
                 //     field: 'search',
                 // },
-            },
-        },
+            }
+        }
     };
 }
 
@@ -56,7 +56,7 @@ export function get_category_id_query(store_id, id) {
         index: get_category_index_name(store_id),
         size: 1,
         query: {
-            match: { id: { query: id } },
-        },
+            match: { id: { query: id } }
+        }
     };
 }

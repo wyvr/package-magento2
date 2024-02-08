@@ -7,7 +7,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
 export async function open_db(db, connection, name, sql_create_table) {
-    if (db && db.exists && db.connected) {
+    if (db?.exists && db.connected) {
         return { db, connection };
     }
     db = Storage.details(name);
@@ -23,7 +23,7 @@ export async function open_db(db, connection, name, sql_create_table) {
         // save and store the connection
         connection = await open({
             filename: db.path,
-            driver: sqlite3.Database,
+            driver: sqlite3.Database
         });
 
         // tables
@@ -89,15 +89,12 @@ export async function set_data(connection, name, data) {
     const values = [];
     const keys = [];
     const placeholder = [];
-    Object.entries(data).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(data)) {
         keys.push(key);
         values.push(value);
         placeholder.push('?');
-    });
-    await connection.run(
-        `INSERT OR REPLACE INTO "${db_name}" (${keys.join(',')}) VALUES (${placeholder.join(',')});`,
-        ...values
-    );
+    }
+    await connection.run(`INSERT OR REPLACE INTO "${db_name}" (${keys.join(',')}) VALUES (${placeholder.join(',')});`, ...values);
     return true;
 }
 

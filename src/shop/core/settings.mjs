@@ -3,18 +3,18 @@ import { Logger } from '@wyvr/generator/src/utils/logger.js';
 import { search_segment } from '@wyvr/generator/src/utils/segment.js';
 import { load_data } from './elasticsearch.mjs';
 
-let cache = {};
+const cache = {};
 
 async function load(store, source) {
     if (cache[store]) {
         return cache[store];
     }
-    if (store == undefined) {
+    if (store === undefined) {
         return undefined;
     }
     try {
         const data = await load_data('wyvr_settings', { id: store });
-        if(!data) {
+        if (!data) {
             return undefined;
         }
         const result = data[0]?.value;
@@ -30,7 +30,7 @@ async function load(store, source) {
 
 export async function get(store, segment, source, fallback) {
     const data = await load(store, source);
-    if(!segment || typeof segment != 'string') {
+    if (!segment || typeof segment !== 'string') {
         return fallback;
     }
     return search_segment(data, segment.replace(/\//g, '.'), fallback);

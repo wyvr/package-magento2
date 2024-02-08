@@ -14,25 +14,21 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
             return {
                 error: create_guest_cart_error,
                 status: 500,
-                cart: undefined,
+                cart: undefined
             };
         }
-        const [get_guest_cart_error, guest_cart] = await get_guest_cart(
-            store,
-            guest_cart_meta?.cart_id || email_or_cart_token,
-            is_prod
-        );
+        const [get_guest_cart_error, guest_cart] = await get_guest_cart(store, guest_cart_meta?.cart_id || email_or_cart_token, is_prod);
         if (get_guest_cart_error) {
             return {
                 error: get_guest_cart_error,
                 status: 500,
-                cart: undefined,
+                cart: undefined
             };
         }
         return {
             error: undefined,
             status: 200,
-            cart: guest_cart,
+            cart: guest_cart
         };
     }
     // customer
@@ -41,7 +37,7 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
         return {
             error: valid_error,
             status: 403,
-            cart: undefined,
+            cart: undefined
         };
     }
 
@@ -50,7 +46,7 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
         return {
             error: create_cart_error,
             status: 500,
-            cart: undefined,
+            cart: undefined
         };
     }
 
@@ -60,12 +56,12 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
         return {
             error: get_cart_error,
             status: 500,
-            cart: undefined,
+            cart: undefined
         };
     }
     return {
         error: undefined,
         status: 200,
-        cart,
+        cart
     };
 }

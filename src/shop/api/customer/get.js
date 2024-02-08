@@ -14,12 +14,7 @@ export async function get_customer(store, id, isProd) {
     try {
         get_result = await get(get_url, authOptions(admin_token, jsonOptions({})));
         if (!get_result.ok) {
-            Logger.warning(
-                'magento2 get customer, request failed',
-                get_result.status,
-                get_result.statusText,
-                get_result.body
-            );
+            Logger.warning('magento2 get customer, request failed', get_result.status, get_result.statusText, get_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {

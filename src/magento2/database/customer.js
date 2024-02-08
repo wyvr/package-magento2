@@ -35,7 +35,10 @@ export async function get(name, key) {
 }
 
 export async function set(name, key, value) {
-    return await set_data(connection, name, { key, value: JSON.stringify(value) });
+    return await set_data(connection, name, {
+        key,
+        value: JSON.stringify(value)
+    });
 }
 
 export async function query(name, query, ...params) {

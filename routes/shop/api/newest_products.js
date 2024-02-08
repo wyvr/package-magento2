@@ -6,12 +6,11 @@ import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
 import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
 import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
 
-
 export default {
     url: '/[store]/api/newest_products/[flag]/[amount]/',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ params, returnJSON, data, isProd }) => {
@@ -43,15 +42,15 @@ export default {
         magento_data.flag = params.flag;
 
         // remove some data
-        delete magento_data.stores;
+        magento_data.stores = undefined;
 
         // load from elasticsearch
         const query = get_catalog_products_query(magento_data?.store?.value, amount, undefined, [
             {
                 created_at: {
-                    order: 'desc',
-                },
-            },
+                    order: 'desc'
+                }
+            }
         ]);
 
         // cache the results because 90% of this request is the elastic search request
@@ -59,22 +58,18 @@ export default {
 
         const all_products = (result?.hits?.hits || []).map((x) => x?._source?.product);
 
-        let sorted_products = all_products.sort(
-            (a, b) => new Date(b?.created_at || 0).getTime() - new Date(a?.created_at || 0).getTime()
-        );
+        let sorted_products = all_products.sort((a, b) => new Date(b?.created_at || 0).getTime() - new Date(a?.created_at || 0).getTime());
         // show only products with the attribute new activated
-        if (params.flag == 'new') {
-            sorted_products = sorted_products.filter((p) => p.new && p.new != '0');
+        if (params.flag === 'new') {
+            sorted_products = sorted_products.filter((p) => p.new && p.new !== '0');
         }
 
-        magento_data.products = sorted_products
-            .slice(0, amount)
-            .map((p) => reduce_attributes(p, category_product_attributes));
+        magento_data.products = sorted_products.slice(0, amount).map((p) => reduce_attributes(p, category_product_attributes));
 
         if (isProd) {
             set_cache(data.url, magento_data);
         }
 
         return returnJSON(magento_data);
-    },
+    }
 };

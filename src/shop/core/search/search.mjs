@@ -9,40 +9,37 @@ import { get_suggestions } from '@src/shop/core/search/suggestion.mjs';
 import { transform_result } from '@src/shop/core/search/transform_result.mjs';
 
 export async function search_execute(term, store_id, size) {
-    if (term == undefined) {
-        term = '';
-    }
-    term = (term + '' || '').toLowerCase();
+    const search_term = (term === undefined || term === null ? '' : term).toLowerCase();
     const result = {
         search: {},
         timing: {},
-        term,
+        term: search_term,
         found: false,
-        suggestion: [],
+        suggestion: []
     };
-    if (term) {
+    if (search_term) {
         const action_results = await Promise.all([
-            search_execute_index(term, store_id, size, 'category', get_category_query),
-            search_execute_index(term, store_id, size, 'page', get_page_query),
-            search_execute_index(term, store_id, size, 'product', get_product_query, (product) => {
+            search_execute_index(search_term, store_id, size, 'category', get_category_query),
+            search_execute_index(search_term, store_id, size, 'page', get_page_query),
+            search_execute_index(search_term, store_id, size, 'product', get_product_query, (product) => {
                 const result = {};
-                Object.keys(product).forEach((key) => {
+                for (const key of Object.keys(product)) {
                     if (search_product_attributes.indexOf(key) > -1) {
                         result[key] = product[key];
                     }
-                });
+                }
                 return result;
-            }),
+            })
         ]);
 
-        action_results.forEach((entry) => {
+        for (const entry of action_results) {
             result.search[entry.type] = entry.hits;
             if (entry.hits.length > 0) {
                 result.found = true;
             }
             result.timing[entry.type] = entry.timing;
             result.suggestion = entry.suggestion;
-        });
+        }
     }
     return result;
 }
@@ -53,9 +50,9 @@ export async function search_execute_index(term, store_id, size, type, query_fn,
         timing: 0,
         suggestion: [],
         hits: [],
-        type,
+        type
     };
-    if (typeof query_fn != 'function') {
+    if (typeof query_fn !== 'function') {
         return result;
     }
     try {

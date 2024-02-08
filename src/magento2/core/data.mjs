@@ -8,18 +8,18 @@ const currency_cache = {};
 
 export async function get_magento_data(url) {
     const data = {
-        date: new Date(),
+        date: new Date()
     };
-    if (typeof url != 'string' || url.length == 0) {
+    if (typeof url !== 'string' || url.length === 0) {
         return data;
     }
-    const message = 'magento 2 plugin ' + url;
+    const message = `magento 2 plugin ${url}`;
     const store_key = get_store_key(url);
     const store_data = get_store_data(store_key);
 
-    Object.keys(store_data).forEach((key) => {
+    for (const key of Object.keys(store_data)) {
         data[key] = store_data[key];
-    });
+    }
 
     if (!store_key) {
         return data;
@@ -41,12 +41,12 @@ export async function get_magento_data(url) {
     if (!currency_cache[store_id]) {
         currency_cache[store_id] = await get(store_id, 'currency.options.default', message, 'EUR');
     }
-    data.currency = currency_cache[store_id]
+    data.currency = currency_cache[store_id];
     return data;
 }
 export function get_store_key(url) {
     const store_match = url.match(/^\/([^\/]+)\//);
-    if (store_match && store_match[1]) {
+    if (store_match?.[1]) {
         return store_match[1];
     }
     return undefined;
@@ -56,17 +56,17 @@ export function get_store_data(store_key) {
     const result = { stores };
     const store_keys = Object.keys(stores);
 
-    if (store_key && store_keys.find((key) => key == store_key)) {
+    if (store_key && store_keys.find((key) => key === store_key)) {
         result.store = {
             key: store_key,
-            value: stores[store_key],
+            value: stores[store_key]
         };
     } else {
         // fallback to first store
         const first_key = Object.keys(stores).find((x) => x);
         result.store = {
             key: first_key,
-            value: stores[first_key],
+            value: stores[first_key]
         };
     }
 
@@ -75,12 +75,12 @@ export function get_store_data(store_key) {
 export async function get_page_by_url(store_id, route) {
     const data = {};
     const page_data = await load_data(`wyvr_page_${store_id}`, { url: route });
-    if (!Array.isArray(page_data) || page_data.length == 0 || !page_data[0].page) {
+    if (!Array.isArray(page_data) || page_data.length === 0 || !page_data[0].page) {
         return data;
     }
     await Promise.all(
         Object.keys(page_data[0].page).map(async (key) => {
-            if (key == 'content') {
+            if (key === 'content') {
                 data[key] = await replace_content(page_data[0].page[key], store_id);
                 return undefined;
             }

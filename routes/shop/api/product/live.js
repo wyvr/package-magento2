@@ -9,7 +9,7 @@ export default {
     url: '/[store]/api/product/live/[sku]',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ params, data, returnJSON, isProd }) => {
@@ -35,22 +35,22 @@ export default {
                 fn: (result) => {
                     const { qty = 0, is_in_stock = false } = result;
                     return { qty, is_in_stock };
-                },
+                }
             },
             {
                 prop: 'price',
-                url: magentoUrl(`/rest/all/V1/products/base-prices-information`),
+                url: magentoUrl('/rest/all/V1/products/base-prices-information'),
                 body: { skus: [params.sku] },
                 method: 'post',
-                fn: getPrice,
+                fn: getPrice
             },
             {
                 prop: 'special_price',
-                url: magentoUrl(`/rest/all/V1/products/special-price-information`),
+                url: magentoUrl('/rest/all/V1/products/special-price-information'),
                 body: { skus: [params.sku] },
                 method: 'post',
-                fn: getPrice,
-            },
+                fn: getPrice
+            }
         ];
 
         const updated = {};
@@ -61,15 +61,13 @@ export default {
                     return false;
                 }
                 const config = {
-                    method: entry?.method || 'GET',
+                    method: entry?.method || 'GET'
                 };
                 if (entry.body) {
-                    if (entry.body) {
-                        config.body = {};
-                    }
-                    Object.entries(entry.body).forEach(([key, value]) => {
+                    config.body = {};
+                    for (const [key, value] of Object.entries(entry.body)) {
                         config.body[key] = value;
-                    });
+                    }
                 }
 
                 try {
@@ -78,7 +76,7 @@ export default {
                         get_logger().warning('magento2 product, live request failed', entry.url, result.status, result.statusText);
                         return false;
                     }
-                    if (typeof entry?.fn == 'function') {
+                    if (typeof entry?.fn === 'function') {
                         updated[entry.prop] = entry.fn(result.body);
                         return true;
                     }
@@ -96,11 +94,11 @@ export default {
         }
         set_cache(data.url, { created, updated });
         return returnJSON(updated);
-    },
+    }
 };
 
 function getPrice(result) {
-    if (!Array.isArray(result) || result.length == 0) {
+    if (!Array.isArray(result) || result.length === 0) {
         return undefined;
     }
     return result[0].price;

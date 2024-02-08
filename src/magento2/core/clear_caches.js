@@ -54,9 +54,9 @@ export async function clear_all_urls(index) {
     get_logger().warning('clear whole cache');
     if (total_routes && total_routes.length > 0) {
         get_logger().info('clear', total_routes.length, 'generated routes');
-        total_routes.forEach((file) => {
+        for (const file of total_routes) {
             remove(url_join(ReleasePath.get(), file));
-        });
+        }
     } else {
         get_logger().info('no routes to clear');
     }
@@ -90,35 +90,35 @@ export async function clear_urls(index, data_docs) {
     }
     // delete the docs as soon as possible
     await Promise.all(data_docs.map(async (hit) => await del(index, hit._id)));
-    
+
     const stores = get_config('shop.stores', {});
     const slug = get_config('shop.slug');
     const prefixes = get_config('magento2.elasticsearch.category_url_prefix');
-    
+
     // build url of the entry
     const upsert_urls = [];
-    data_docs.forEach((hit) => {
-        Object.entries(stores).forEach(([store_name, store_id]) => {
+    for (const hit of data_docs) {
+        for (const [store_name, store_id] of Object.entries(stores)) {
             const prefix = prefixes[store_id] || '';
             // remove the prefix for categories
-            const partial_url = prefix && hit._source.scope == 'category' ? hit._source.id.replace(prefix + '/', '') : hit._source.id;
+            const partial_url = prefix && hit._source.scope === 'category' ? hit._source.id.replace(`${prefix}/`, '') : hit._source.id;
             const url = to_index(url_join(store_name, slug[hit._source.scope], partial_url));
 
-            if (hit._source.type == 'delete') {
+            if (hit._source.type === 'delete') {
                 // delete the generated file directly
                 remove(url_join(ReleasePath.get(), url));
             } else {
                 upsert_urls.push(url);
             }
-        });
-    });
+        }
+    }
 
     await generate_routes(upsert_urls);
 }
 
 export async function generate_routes(urls) {
     if (urls && urls.length > 0) {
-        const domain = 'https://' + get_config('url');
+        const domain = `https://${get_config('url')}`;
         const chunk_size = Math.round(WorkerController.get_cpu_cores() / 3);
         const chunks = get_chunks(urls, chunk_size);
         const release_path = ReleasePath.get();
@@ -132,7 +132,7 @@ export async function generate_routes(urls) {
                     // delete before the route is requested
                     remove(join(release_path, url));
                     const [error, ok] = await trigger_url(url_join(domain, url));
-                    if(error) {
+                    if (error) {
                         get_logger().error('error triggering', url, error);
                     }
                     return ok;
@@ -146,7 +146,7 @@ export async function generate_routes(urls) {
 export async function trigger_url(url) {
     try {
         const response = await fetch(url, {
-            cache: 'no-cache',
+            cache: 'no-cache'
         });
 
         return [undefined, response.ok];

@@ -10,7 +10,7 @@ export default {
     url: '/[store]/api/product/get/',
     _wyvr: () => {
         return {
-            methods: ['post'],
+            methods: ['post']
         };
     },
     onExec: async ({ data, body, returnJSON }) => {
@@ -22,7 +22,7 @@ export default {
 
         const queries = body
             .map((sku) => {
-                if (typeof sku != 'string') {
+                if (typeof sku !== 'string') {
                     return undefined;
                 }
                 return get_product_sku_query(magento_data?.store?.value, sku);
@@ -38,10 +38,10 @@ export default {
             })
         );
         const products = results.filter(Boolean);
-        if (!products || products.length == 0) {
+        if (!products || products.length === 0) {
             return returnJSON(undefined, 400);
         }
 
         return returnJSON(products);
-    },
+    }
 };

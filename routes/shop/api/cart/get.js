@@ -4,7 +4,7 @@ export default {
     url: '/[store]/api/cart/[email]/',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ params, returnJSON, headers, isProd }) => {
@@ -14,5 +14,5 @@ export default {
         }
 
         return returnJSON(cart_result.cart);
-    },
+    }
 };

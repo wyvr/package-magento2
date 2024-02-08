@@ -50,14 +50,14 @@ export default {
             ...{
                 template: ['shop/Category', 'shop/Default'],
                 methods: ['get'],
-                persist: true,
-            },
+                persist: true
+            }
         };
         if (!data?.category?.entity_id) {
             return result;
         }
 
-        let curPath = [];
+        const curPath = [];
         const path = (data.category?.path || '')
             .split('/')
             .map((id) => {
@@ -73,5 +73,5 @@ export default {
     title: ({ params, data }) => data.category?.name || data?.title || params.slug,
     content: ({ data }) => {
         return data?.content || '';
-    },
+    }
 };

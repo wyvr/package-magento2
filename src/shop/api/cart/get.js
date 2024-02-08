@@ -23,12 +23,7 @@ async function load_cart(url, is_guest, cart_id, is_prod) {
     try {
         get_result = await get(url, authOptions(admin_token, jsonOptions({})));
         if (!get_result.ok) {
-            Logger.warning(
-                'magento2 get cart, request failed',
-                get_result.status,
-                get_result.statusText,
-                get_result.body
-            );
+            Logger.warning('magento2 get cart, request failed', get_result.status, get_result.statusText, get_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {

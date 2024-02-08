@@ -8,13 +8,11 @@ export async function update_cart_action(store, email_or_cart_token, cart, data,
     const is_guest = is_guest_token(email_or_cart_token);
 
     let last_result;
-    let errors = [];
+    const errors = [];
     try {
         await Promise.all(
             Object.entries(data).map(async ([sku, qty]) => {
-                const [error, result] = is_guest
-                    ? await update_guest_cart_item(store, cart, sku, qty, is_prod)
-                    : await update_cart_item(store, cart, sku, qty, is_prod);
+                const [error, result] = is_guest ? await update_guest_cart_item(store, cart, sku, qty, is_prod) : await update_cart_item(store, cart, sku, qty, is_prod);
                 if (error) {
                     errors.push(error);
                 }
@@ -29,9 +27,7 @@ export async function update_cart_action(store, email_or_cart_token, cart, data,
         return { error: __('shop.internal_error'), status: 500, cart: undefined };
     }
 
-    const [final_error, final_cart] = is_guest
-        ? await get_guest_cart(store, cart?.cart_id || email_or_cart_token, is_prod)
-        : await get_cart(store, cart?.id, is_prod);
+    const [final_error, final_cart] = is_guest ? await get_guest_cart(store, cart?.cart_id || email_or_cart_token, is_prod) : await get_cart(store, cart?.id, is_prod);
     if (final_error) {
         errors.push(final_error);
         return { error: errors, status: 500, cart: undefined };

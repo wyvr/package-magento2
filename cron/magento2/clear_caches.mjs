@@ -39,9 +39,9 @@ export default async function () {
     const cache_clear = await search({
         index,
         query: {
-            match: { type: { query: 'clear' } },
+            match: { type: { query: 'clear' } }
         },
-        size: 1,
+        size: 1
     });
 
     // clear all known pages
@@ -52,7 +52,7 @@ export default async function () {
 
     const default_size = 25;
     let size = parseInt(get_config('magento2.cache.regenerate_size', default_size), 10);
-    if (isNaN(size)) {
+    if (Number.isNaN(size)) {
         size = default_size;
     }
 
@@ -60,9 +60,9 @@ export default async function () {
     const data = await search({
         index,
         query: {
-            match_all: {},
+            match_all: {}
         },
-        size,
+        size
     });
 
     /**

@@ -5,7 +5,7 @@ export async function admin_token(username, password) {
     const result = await post(
         magentoUrl('/rest/all/V1/integration/admin/token'),
         jsonOptions({
-            body: { username, password },
+            body: { username, password }
         })
     );
 

@@ -18,23 +18,23 @@ export async function update_customer(store, id, data, isProd) {
         return [get_error, undefined];
     }
 
-    let modified = [];
+    const modified = [];
     // update customer values
     if (data.customer) {
         // change only allowed attributes
-        ['firstname', 'lastname', 'email', 'newsletter'].forEach((key) => {
+        for (const key of ['firstname', 'lastname', 'email', 'newsletter']) {
             if (data.customer[key] !== undefined) {
                 modified.push({ type: 'customer', key });
-                if (key == 'newsletter') {
+                if (key === 'newsletter') {
                     if (!customer.additional) {
                         customer.additional = {};
                     }
                     customer.additional.is_subscribed = data.customer[key];
-                    return;
+                    continue;
                 }
                 customer[key] = data.customer[key];
             }
-        });
+        }
     }
     // add addresses
     if (Array.isArray(data.customer?.addresses)) {
@@ -42,7 +42,7 @@ export async function update_customer(store, id, data, isProd) {
         customer.addresses = data.customer.addresses;
     }
     // avoid update when nothing has changed
-    if (modified.length == 0) {
+    if (modified.length === 0) {
         return [undefined, customer];
     }
     const put_url = magentoUrl(`/rest/all/V1/customers/${id}`);
@@ -50,19 +50,14 @@ export async function update_customer(store, id, data, isProd) {
     // transform additional to extension_attributes
     if (customer.additional) {
         customer.extension_attributes = { ...customer.additional };
-        delete customer.additional;
+        customer.additional = undefined;
     }
 
     let update_result;
     try {
         update_result = await put(put_url, authOptions(admin_token, jsonOptions({ body: { customer } })));
         if (!update_result.ok) {
-            Logger.warning(
-                'magento2 update customer, request failed',
-                update_result.status,
-                update_result.statusText,
-                update_result.body
-            );
+            Logger.warning('magento2 update customer, request failed', update_result.status, update_result.statusText, update_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {
@@ -71,8 +66,10 @@ export async function update_customer(store, id, data, isProd) {
     }
     // transform extension_attributes to additional
     if (update_result?.body?.extension_attributes) {
-        update_result.body.additional = { ...update_result.body.extension_attributes };
-        delete update_result.body.extension_attributes;
+        update_result.body.additional = {
+            ...update_result.body.extension_attributes
+        };
+        update_result.body.extension_attributes = undefined;
     }
     return [undefined, update_result?.body];
 }

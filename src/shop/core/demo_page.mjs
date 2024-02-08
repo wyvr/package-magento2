@@ -14,6 +14,6 @@ export function DemoPage(config) {
         title: 'Magento 2 Core',
         content: `
             ${pkg_config}
-            `,
+            `
     };
 }

@@ -5,8 +5,8 @@ export function _wyvr({ data }) {
     return {
         ...(data?._wyvr ?? {}),
         ...{
-            template: [`shop/NotFound`, 'shop/Default'],
-            persist: false,
-        },
+            template: ['shop/NotFound', 'shop/Default'],
+            persist: false
+        }
     };
 }

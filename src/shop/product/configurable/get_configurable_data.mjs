@@ -26,49 +26,44 @@ export function get_configurable_data(configurable_options, configurable_product
         ]
     }
     */
-    if (
-        !configurable_options ||
-        typeof configurable_options != 'object' ||
-        Array.isArray(configurable_options) ||
-        !Array.isArray(configurable_products)
-    ) {
+    if (!configurable_options || typeof configurable_options !== 'object' || Array.isArray(configurable_options) || !Array.isArray(configurable_products)) {
         return undefined;
     }
 
     const list = Object.values(configurable_options);
     // get full list of in_stock per sku
     const sku_stock = {};
-    configurable_products.forEach((product) => {
+    for (const product of configurable_products) {
         const stock = get_stock(product);
         sku_stock[product.sku.value] = !!(stock.qty > 0 && stock.is_in_stock);
-    });
+    }
 
     // the configurable option attributes
     const attribute_options = {};
-    list.forEach((options) => {
-        options.forEach((option) => {
+    for (const options of list) {
+        for (const option of options) {
             if (!attribute_options[option.attribute_code]) {
                 attribute_options[option.attribute_code] = [];
             }
-            if (attribute_options[option.attribute_code].indexOf(option.value_index) == -1) {
+            if (attribute_options[option.attribute_code].indexOf(option.value_index) === -1) {
                 attribute_options[option.attribute_code].push(option.value_index);
             }
-        });
-    });
+        }
+    }
     const attributes = Object.keys(attribute_options);
 
     const data = list
         .map((options) => {
-            if (!options || options.length == 0) {
+            if (!options || options.length === 0) {
                 return undefined;
             }
             const result = {
                 values: [],
                 data: {},
-                in_stock: false,
+                in_stock: false
             };
 
-            options.forEach((option) => {
+            for (const option of options) {
                 if (!result.attribute_code) {
                     result.attribute_code = option.attribute_code;
                 }
@@ -76,7 +71,7 @@ export function get_configurable_data(configurable_options, configurable_product
                     result.label = option.super_attribute_label;
                 }
 
-                const product = configurable_products.find((product) => product.sku.value == option.sku);
+                const product = configurable_products.find((product) => product.sku.value === option.sku);
 
                 const in_stock = sku_stock[option.sku];
                 let enabled_options = null;
@@ -87,16 +82,16 @@ export function get_configurable_data(configurable_options, configurable_product
                     if (!enabled_options) {
                         enabled_options = {};
                     }
-                    attributes.forEach((attribute_code) => {
+                    for (const attribute_code of attributes) {
                         // ignore the current attribute of the option
-                        if (attribute_code == option.attribute_code) {
+                        if (attribute_code === option.attribute_code) {
                             return;
                         }
                         if (!enabled_options[attribute_code]) {
                             enabled_options[attribute_code] = [];
                         }
                         enabled_options[attribute_code].push(get_attribute_value(product, attribute_code));
-                    });
+                    }
                 }
 
                 // add the options
@@ -110,27 +105,27 @@ export function get_configurable_data(configurable_options, configurable_product
                         title: option.default_title || option.option_title || option.value_index,
                         in_stock,
                         enabled_options,
-                        skus,
+                        skus
                     });
                     result.data[option.value_index] = [];
                 } else {
                     // the option was already there, add the enabled options
                     result.values = result.values.map((value) => {
-                        if (value.key == option.value_index) {
+                        if (value.key === option.value_index) {
                             value.skus[option.sku] = sku_stock[option.sku];
                             if (enabled_options) {
                                 const new_enabled = value.enabled_options || {};
-                                Object.entries(enabled_options).forEach(([key, values]) => {
+                                for (const [key, values] of Object.entries(enabled_options)) {
                                     if (!new_enabled[key]) {
                                         new_enabled[key] = [];
                                     }
-                                    values.forEach((value) => {
+                                    for (const value of values) {
                                         // only add the value if it not already exists
-                                        if (new_enabled[key].indexOf(value) == -1) {
+                                        if (new_enabled[key].indexOf(value) === -1) {
                                             new_enabled[key].push(value);
                                         }
-                                    });
-                                });
+                                    }
+                                }
                                 value.enabled_options = new_enabled;
                             }
                             // if any of the options is in stock set the option in_stock
@@ -144,10 +139,10 @@ export function get_configurable_data(configurable_options, configurable_product
                 // append the option with the whole product
                 const new_option = {
                     sku: option.sku,
-                    product: Object.assign({}, product),
+                    product: Object.assign({}, product)
                 };
                 result.data[option.value_index].push(new_option);
-            });
+            }
             return result;
         })
         .filter((x) => x);

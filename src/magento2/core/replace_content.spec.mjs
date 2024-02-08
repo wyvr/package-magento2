@@ -13,9 +13,6 @@ describe('magento2/core/replace_content', () => {
     });
     it('extract media', async () => {
         const content = await replace_content('<img src="{{media url=wysiwyg/Favicon.png}}" alt=""/>', 0);
-        strictEqual(
-            content,
-            '<img src="(media(src:\'' + Config.get('shop.domain') + '/media/wysiwyg/Favicon.png\'))" alt=""/>'
-        );
+        strictEqual(content, `<img src="(media(src:\'${Config.get('shop.domain')}/media/wysiwyg/Favicon.png\'))" alt=""/>`);
     });
 });

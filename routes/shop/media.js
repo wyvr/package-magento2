@@ -4,8 +4,8 @@ export default {
     url: '/media/[config]/[filepath]',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
-    onExec,
+    onExec
 };

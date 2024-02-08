@@ -11,7 +11,7 @@ export default {
     url: '/[store]/api/query_products/',
     _wyvr: () => {
         return {
-            methods: ['get'],
+            methods: ['get']
         };
     },
     onExec: async ({ query, returnJSON, data, isProd }) => {
@@ -51,7 +51,7 @@ export default {
         magento_data.conditions = conditions;
 
         // remove some data
-        delete magento_data.stores;
+        magento_data.stores = undefined;
         if (!conditions) {
             return returnJSON(magento_data);
         }
@@ -65,7 +65,7 @@ export default {
                 return conditions.every((c) => {
                     if (c.attribute) {
                         const value = get_attribute_value(p, c.attribute);
-                        return c.operator == '==' || c.operator === undefined ? value == c.value : value != c.value;
+                        return c.operator === '==' || c.operator === undefined ? value === c.value : value !== c.value;
                     }
                 });
             })
@@ -74,14 +74,12 @@ export default {
         const allowed_attributes = Config.get('shop.attributes.slider.allow');
         const denied_attributes = Config.get('shop.attributes.slider.deny');
 
-        magento_data.products = filtered_products
-            .slice(0, amount)
-            .map((p) => reduce_attributes(p, category_product_attributes));
+        magento_data.products = filtered_products.slice(0, amount).map((p) => reduce_attributes(p, category_product_attributes));
 
         if (isProd) {
             set_cache(cache_key, magento_data);
         }
 
         return returnJSON(magento_data);
-    },
+    }
 };

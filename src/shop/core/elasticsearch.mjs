@@ -11,7 +11,7 @@ export async function load_data(index, match, size, filter_fn) {
         return await query_data(
             index,
             {
-                match_all: {},
+                match_all: {}
             },
             size,
             { scroll: '20s' },
@@ -21,7 +21,7 @@ export async function load_data(index, match, size, filter_fn) {
     return await query_data(
         index,
         {
-            match,
+            match
         },
         size,
         undefined,
@@ -32,19 +32,20 @@ export async function load_data(index, match, size, filter_fn) {
 export async function query_data(index, query, size, options, filter_fn) {
     const data = {
         index,
-        query,
+        query
     };
-    if (typeof filter_fn != 'function') {
-        filter_fn = () => true;
+    let filter_function = () => true;
+    if (typeof filter_fn === 'function') {
+        filter_function = filter_fn;
     }
-    if (size && typeof size == 'number') {
+    if (size && typeof size === 'number') {
         data.size = size;
     }
     data.rest_total_hits_as_int = true;
     if (options) {
-        Object.entries(options).forEach(([key, value]) => {
+        for (const [key, value] of Object.entries(options)) {
             data[key] = value;
-        });
+        }
     }
     const result = await search(data);
     if (!result) {
@@ -53,7 +54,7 @@ export async function query_data(index, query, size, options, filter_fn) {
     let hits = undefined;
     if (Array.isArray(result?.hits?.hits)) {
         try {
-            hits = result?.hits?.hits.map((x) => x._source).filter(filter_fn);
+            hits = result?.hits?.hits.map((x) => x._source).filter(filter_function);
         } catch (e) {
             Logger.error(query, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
         }
@@ -71,10 +72,10 @@ export async function query_data(index, query, size, options, filter_fn) {
         const scroll_result = await get_client().scroll({
             scroll_id,
             scroll: options?.scroll ?? '20s',
-            rest_total_hits_as_int: true,
+            rest_total_hits_as_int: true
         });
         if (!scroll_result) {
-            Logger.error(`magento2 elasticsearch scroll returned no result`);
+            Logger.error('magento2 elasticsearch scroll returned no result');
             return hits;
         }
         if (!scroll_result._scroll_id || !Array.isArray(scroll_result?.hits?.hits)) {
@@ -86,10 +87,10 @@ export async function query_data(index, query, size, options, filter_fn) {
             return hits;
         }
         // filter search results as early as possible
-        hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source).filter(filter_fn));
+        hits = hits.concat(scroll_result?.hits?.hits.map((x) => x._source).filter(filter_function));
 
         // avoid scrolling when no results gets returned
-        if (scroll_result?.hits?.hits?.length == 0) {
+        if (scroll_result?.hits?.hits?.length === 0) {
             scroll_id = undefined;
         }
     }
@@ -144,8 +145,8 @@ export async function clear_index(index) {
         await get_client().deleteByQuery({
             index,
             query: {
-                match_all: {},
-            },
+                match_all: {}
+            }
         });
         return true;
     } catch (e) {
@@ -158,10 +159,12 @@ export function get_client() {
     if (client) {
         return client;
     }
-    const elasticsearch = Config.get('magento2.elasticsearch', { node: 'http://localhost:9200' });
+    const elasticsearch = Config.get('magento2.elasticsearch', {
+        node: 'http://localhost:9200'
+    });
     client = new Client({
         node: elasticsearch.node,
-        auth: elasticsearch.auth,
+        auth: elasticsearch.auth
     });
     return client;
 }

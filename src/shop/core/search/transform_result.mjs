@@ -5,11 +5,12 @@ export function transform_result(search_result, prop_name, fn) {
     }
     return hits
         .map((hit) => {
-            if (!hit || !hit._source) {// || !hit._source[prop_name]
+            if (!hit?._source) {
+                // || !hit._source[prop_name]
                 return undefined;
             }
             const item = hit._source[prop_name];
-            if (typeof fn != 'function') {
+            if (typeof fn !== 'function') {
                 return item;
             }
             // can throw an error, catch and handle them when used
