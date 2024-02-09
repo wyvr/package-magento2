@@ -41,7 +41,7 @@ export default {
                 continue;
             }
             if (value.match(/\P{L}/)) {
-                errors.push(__('shop.invalid_field', { name: `__('customer.${field}')` }));
+                errors.push(__('shop.invalid_field', { name: __(`customer.${field}`) }));
             }
         }
 
