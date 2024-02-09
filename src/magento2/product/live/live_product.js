@@ -1,5 +1,5 @@
 import { isServer } from '@wyvr/generator';
-import { getSharedStore, setSharedStore } from '@src/shop/stores/shared';
+import { getSharedStore, setSharedStore } from '@src/wyvr/stores/shared.js';
 import { load_live_product } from '@src/magento2/api-client/product/load_live_product';
 
 export const live_name = 'live';
