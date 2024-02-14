@@ -11,11 +11,7 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
     if (is_guest) {
         const [create_guest_cart_error, guest_cart_meta] = await create_guest_cart(store, email_or_cart_token, is_prod);
         if (create_guest_cart_error) {
-            return {
-                error: create_guest_cart_error,
-                status: 500,
-                cart: undefined
-            };
+            return end(create_guest_cart_error, undefined);
         }
         const [get_guest_cart_error, guest_cart] = await get_guest_cart(store, guest_cart_meta?.cart_id || email_or_cart_token, is_prod);
 
@@ -23,65 +19,42 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
             // try load a new guest cart
             const [new_create_guest_cart_error, new_guest_cart_meta] = await create_guest_cart(store, 'guest', is_prod);
             if (new_create_guest_cart_error) {
-                return {
-                    error: get_guest_cart_error,
-                    status: 500,
-                    cart: undefined
-                };
+                return end(get_guest_cart_error, undefined);
             }
 
             const [new_get_guest_cart_error, new_guest_cart] = await get_guest_cart(store, new_guest_cart_meta?.cart_id, is_prod);
 
-            if (new_get_guest_cart_error) {
-                return {
-                    error: new_get_guest_cart_error,
-                    status: 500,
-                    cart: undefined
-                };
-            }
-            return {
-                error: undefined,
-                status: 200,
-                cart: new_guest_cart
-            };
+            return end(new_get_guest_cart_error, new_guest_cart);
         }
-        return {
-            error: undefined,
-            status: 200,
-            cart: guest_cart
-        };
+        return end(undefined, guest_cart);
     }
     // customer
     const [valid_error, base_customer] = await valid(email_or_cart_token, bearer_token);
     if (valid_error) {
-        return {
-            error: valid_error,
-            status: 403,
-            cart: undefined
-        };
+        return end(valid_error, undefined, 403);
     }
 
     const [create_cart_error, cart_meta] = await create_cart(store, email_or_cart_token, base_customer?.id, is_prod);
     if (create_cart_error) {
-        return {
-            error: create_cart_error,
-            status: 500,
-            cart: undefined
-        };
+        return end(create_cart_error, undefined);
     }
 
     // load the customer cart
     const [get_cart_error, cart] = await get_cart(store, cart_meta?.id, is_prod);
-    if (get_cart_error) {
+    return end(get_cart_error, cart);
+}
+
+function end(error, cart, status) {
+    if (error) {
         return {
-            error: get_cart_error,
-            status: 500,
+            error,
+            status: status ?? 500,
             cart: undefined
         };
     }
     return {
         error: undefined,
-        status: 200,
+        status: status ?? 200,
         cart
     };
 }
