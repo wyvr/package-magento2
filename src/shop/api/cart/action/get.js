@@ -18,11 +18,31 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
             };
         }
         const [get_guest_cart_error, guest_cart] = await get_guest_cart(store, guest_cart_meta?.cart_id || email_or_cart_token, is_prod);
+
         if (get_guest_cart_error) {
+            // try load a new guest cart
+            const [new_create_guest_cart_error, new_guest_cart_meta] = await create_guest_cart(store, 'guest', is_prod);
+            if (new_create_guest_cart_error) {
+                return {
+                    error: get_guest_cart_error,
+                    status: 500,
+                    cart: undefined
+                };
+            }
+
+            const [new_get_guest_cart_error, new_guest_cart] = await get_guest_cart(store, new_guest_cart_meta?.cart_id, is_prod);
+
+            if (new_get_guest_cart_error) {
+                return {
+                    error: new_get_guest_cart_error,
+                    status: 500,
+                    cart: undefined
+                };
+            }
             return {
-                error: get_guest_cart_error,
-                status: 500,
-                cart: undefined
+                error: undefined,
+                status: 200,
+                cart: new_guest_cart
             };
         }
         return {
