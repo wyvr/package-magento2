@@ -2,6 +2,7 @@ import { create_cart, create_guest_cart } from '@src/shop/api/cart/create';
 import { get_cart, get_guest_cart } from '@src/shop/api/cart/get';
 import { valid } from '@src/shop/api/customer/valid.js';
 import { is_guest_token } from '@src/shop/api/cart/is_guest_token';
+import { Logger } from '@wyvr/generator/src/utils/logger.js';
 
 export async function get_cart_action(store, email_or_cart_token, bearer_token, is_prod = false) {
     /**
@@ -23,7 +24,9 @@ export async function get_cart_action(store, email_or_cart_token, bearer_token, 
             }
 
             const [new_get_guest_cart_error, new_guest_cart] = await get_guest_cart(store, new_guest_cart_meta?.cart_id, is_prod);
-
+            if(new_guest_cart) {
+                Logger.success('magento2 get cart, heal guest cart', email_or_cart_token, 'to', new_guest_cart_meta?.cart_id);
+            }
             return end(new_get_guest_cart_error, new_guest_cart);
         }
         return end(undefined, guest_cart);
