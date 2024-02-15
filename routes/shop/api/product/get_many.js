@@ -38,8 +38,8 @@ export default {
             })
         );
         const products = results.filter(Boolean);
-        if (!products || products.length === 0) {
-            return returnJSON(undefined, 400);
+        if (!Array.isArray(products)) {
+            return returnJSON([], 400);
         }
 
         return returnJSON(products);
