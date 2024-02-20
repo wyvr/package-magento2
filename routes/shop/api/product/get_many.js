@@ -31,7 +31,7 @@ export default {
 
         // a maximum of 25 products can be loaded
         const results = await Promise.all(
-            queries.slice(0, 25).map(async (query) => {
+            queries.map(async (query) => {
                 const result = await search(query);
                 const product = result?.hits?.hits?.find((x) => x?._source?.product)?._source?.product;
                 return product;
