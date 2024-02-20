@@ -1,4 +1,5 @@
-import { get_config, get_logger } from '@wyvr/generator/cron.js';
+import { get_config } from '@wyvr/generator/cron.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { load_category_by_slug } from '@src/magento2/category/load_category_by_slug.js';
@@ -9,7 +10,7 @@ export default {
     url: `/[store]/${slug}/[slug]`,
     onExec: async ({ request, params, data, setStatus }) => {
         if (!data?.store?.value) {
-            get_logger().warning('missing store id in category', data.url);
+            logger.warning('missing store id in category', data.url);
             return data;
         }
 
@@ -18,12 +19,12 @@ export default {
         const [category_error, category] = await load_category_by_slug(params.slug, store_id);
 
         if (category_error) {
-            get_logger().error(category_error);
+            logger.error(category_error);
             return await onExec({ data, setStatus });
         }
 
         if (!category.is_active) {
-            get_logger().error('category is disabled', request.url, category.entity_id);
+            logger.error('category is disabled', request.url, category.entity_id);
             data.not_found = true;
             data.avoid_not_found = false;
             data.force_not_found = true;

@@ -1,4 +1,5 @@
-import { get_logger, get_config } from '@wyvr/generator/cron.js';
+import { get_config } from '@wyvr/generator/cron.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { exists_index, get_client, search } from '@src/shop/core/elasticsearch.mjs';
 import { clear_all_urls, clear_urls, index } from '@src/magento2/core/clear_caches.js';
 
@@ -26,12 +27,12 @@ export default async function () {
     try {
         await client.ping();
     } catch (err) {
-        get_logger().error('elasticsearch error:', err.message);
+        logger.error('elasticsearch error:', err.message);
         return;
     }
 
     if (!(await exists_index(index))) {
-        get_logger().warning(`index ${index} does not exist`);
+        logger.warning(`index ${index} does not exist`);
         return;
     }
 

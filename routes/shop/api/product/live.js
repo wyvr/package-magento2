@@ -1,6 +1,6 @@
 import { jsonOptions, magentoUrl, request, authOptions } from '@src/shop/api/api';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
-import { get_logger } from '@wyvr/generator/cron.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { sleep_random } from '@src/shop/api/sleep.js';
 import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
 import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.mjs';
@@ -73,7 +73,7 @@ export default {
                 try {
                     const result = await request(entry.url, authOptions(admin_token, jsonOptions(config)));
                     if (!result.ok) {
-                        get_logger().warning('magento2 product, live request failed', entry.url, result.status, result.statusText);
+                        logger.warning('magento2 product, live request failed', entry.url, result.status, result.statusText);
                         return false;
                     }
                     if (typeof entry?.fn === 'function') {
@@ -82,7 +82,7 @@ export default {
                     }
                     updated[entry.prop] = result.body;
                 } catch (e) {
-                    get_logger().error('magento2 product, live request error', entry.url, e);
+                    logger.error('magento2 product, live request error', entry.url, e);
                     return false;
                 }
                 return true;
