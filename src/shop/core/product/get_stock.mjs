@@ -10,6 +10,9 @@ export function get_stock(product) {
         const child_stocks = product.configurable_products.map((child) => get_single_stock(child)).filter(Boolean);
         stock.is_in_stock = child_stocks.find((s) => s.is_in_stock === '1') != null;
         stock.qty = Math.max(...child_stocks.map((s) => parseFloat(s.qty)));
+        if (stock.qty === -Infinity || stock.qty === Infinity || Number.isNaN(stock.qty)) {
+            stock.qty = 0;
+        }
     }
     // normalize the needed params
     if (typeof stock.qty === 'string') {
