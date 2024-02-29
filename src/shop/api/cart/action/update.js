@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { get_cart, get_guest_cart } from '@src/shop/api/cart/get';
 import { update_cart_item, update_guest_cart_item } from '@src/shop/api/cart/update_item';
 import { is_guest_token } from '@src/shop/api/cart/is_guest_token';
@@ -23,7 +22,7 @@ export async function update_cart_action(store, email_or_cart_token, cart, data,
             })
         );
     } catch (e) {
-        Logger.error(get_error_message(e, import.meta.url, 'magento2 update cart'));
+        logger.error(get_error_message(e, import.meta.url, 'magento2 update cart'));
         return { error: __('shop.internal_error'), status: 500, cart: undefined };
     }
 

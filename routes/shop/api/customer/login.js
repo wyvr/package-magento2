@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 
 import { appendSearchCriteriaToUrl, authOptions, get, jsonOptions, magentoUrl } from '@src/shop/api/api.js';
 import * as DB from '@src/magento2/database/customer.js';
@@ -59,11 +58,11 @@ export default {
                     customers = customer_result.body?.items || [];
                 }
             } catch (e) {
-                Logger.error(get_error_message(e, customer_url, 'magento2 login'));
+                logger.error(get_error_message(e, customer_url, 'magento2 login'));
                 return returnJSON({ message: internal_error }, 500);
             }
             if (!customers || !Array.isArray(customers) || customers.length === 0) {
-                Logger.warning('magento2 login, no customer found');
+                logger.warning('magento2 login, no customer found');
                 return returnJSON({ message: login_error }, 403);
             }
 

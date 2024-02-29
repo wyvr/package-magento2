@@ -1,5 +1,4 @@
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { search_segment } from '@wyvr/generator/src/utils/segment.js';
 import { load_data } from './elasticsearch.mjs';
 
@@ -23,7 +22,7 @@ async function load(store, source) {
             return result;
         }
     } catch (err) {
-        Logger.error(get_error_message(err, source, `settings store ${store}`));
+        logger.error(get_error_message(err, source, `settings store ${store}`));
     }
     return undefined;
 }

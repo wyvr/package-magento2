@@ -1,4 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 
 import * as DB from '@src/magento2/database/customer.js';
 
@@ -14,7 +14,7 @@ export async function load_cart(email) {
             loaded_cart = JSON.parse(result.value);
         }
     } catch (e) {
-        Logger.error(get_error_message(e, import.meta.url, 'magento2 load cart'));
+        logger.error(get_error_message(e, import.meta.url, 'magento2 load cart'));
     }
     const id = loaded_cart?.id;
     if (loaded_cart && loaded_cart.valid_until > new Date().getTime()) {

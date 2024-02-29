@@ -1,5 +1,5 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { get_block_by_id } from '@src/shop/core/block.mjs';
 import { get } from '@src/shop/core/settings.mjs';
 import { exists } from '@wyvr/generator/src/utils/file.js';
@@ -85,7 +85,7 @@ export async function replace_content(content, store_id) {
                 if (value !== undefined) {
                     return value;
                 }
-                Logger.warning('replace content unknown config path', data.path, 'for store', store_key);
+                logger.warning('replace content unknown config path', data.path, 'for store', store_key);
                 return '';
             }
             case 'media':
@@ -94,10 +94,10 @@ export async function replace_content(content, store_id) {
                     data.url = data.url.replace(/\.renditions\//, '');
                     return `(media(src:'${Config.get('shop.domain')}/media/${data.url}'))`;
                 }
-                Logger.warning('replace content media', data);
+                logger.warning('replace content media', data);
                 return '';
         }
-        Logger.warning('replace content', tag_data.tag, data, store_id, store_key);
+        logger.warning('replace content', tag_data.tag, data, store_id, store_key);
         return '';
     });
     return replaced_content.replace(/&lt;/g, '<').replace(/&gt;/g, '>');

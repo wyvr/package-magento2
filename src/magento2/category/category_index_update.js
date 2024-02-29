@@ -1,7 +1,7 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { set } from '@src/magento2/database/navigation.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { url_join } from '@src/shop/core/url.mjs';
 
 export async function category_index_update() {

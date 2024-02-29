@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
 
 export async function get(url, config = {}) {
@@ -63,7 +62,7 @@ export async function request(url, config = {}) {
 
         ok = response.status >= 200 && response.status < 400;
     } catch (e) {
-        Logger.error(get_error_message(e, url, 'magento2 request'));
+        logger.error(get_error_message(e, url, 'magento2 request'));
     }
     return {
         ok,

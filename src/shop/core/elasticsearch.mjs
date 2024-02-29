@@ -1,7 +1,6 @@
 import { Client } from '@elastic/elasticsearch';
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { filled_object } from '@wyvr/generator/src/utils/validate.js';
 
 let client;
@@ -56,7 +55,7 @@ export async function query_data(index, query, size, options, filter_fn) {
         try {
             hits = result?.hits?.hits.map((x) => x._source).filter(filter_function);
         } catch (e) {
-            Logger.error(query, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
+            logger.error(query, get_error_message(e, import.meta.url, 'magento2 elasticsearch'));
         }
     }
     let scroll_id = result._scroll_id;
@@ -75,11 +74,11 @@ export async function query_data(index, query, size, options, filter_fn) {
             rest_total_hits_as_int: true
         });
         if (!scroll_result) {
-            Logger.error('magento2 elasticsearch scroll returned no result');
+            logger.error('magento2 elasticsearch scroll returned no result');
             return hits;
         }
         if (!scroll_result._scroll_id || !Array.isArray(scroll_result?.hits?.hits)) {
-            Logger.error(
+            logger.error(
                 `magento2 elasticsearch scroll ended early ${hits.length} of ${total} loaded only ~${Math.round((100 / total) * hits.length)}% terminated:${
                     scroll_result.terminated_early
                 }`
@@ -113,7 +112,7 @@ export async function search(data) {
         const result = await get_client().search(data);
         return result;
     } catch (e) {
-        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
         return undefined;
     }
 }
@@ -124,7 +123,7 @@ export async function del(index, id) {
         await get_client().delete(data);
         return true;
     } catch (e) {
-        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
         return false;
     }
 }
@@ -135,7 +134,7 @@ export async function del_index(index) {
         await get_client().indices.delete(data);
         return true;
     } catch (e) {
-        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
         return false;
     }
 }
@@ -150,7 +149,7 @@ export async function clear_index(index) {
         });
         return true;
     } catch (e) {
-        Logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
+        logger.error('error', get_error_message(e, import.meta.url, 'magento2 elasticsearch'), JSON.stringify(data));
         return false;
     }
 }

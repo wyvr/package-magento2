@@ -23,7 +23,7 @@ export default {
 
         const admin_token = await get_admin_token(isProd);
         if (!admin_token) {
-            Logger.error('magento2 live product, missing admin token');
+            logger.error('magento2 live product, missing admin token');
             await sleep_random(400, 800);
             return returnJSON({ message: __('shop.internal_error') }, 500);
         }

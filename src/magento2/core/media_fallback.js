@@ -1,5 +1,5 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
 import { FOLDER_GEN } from '@wyvr/generator/src/constants/folder.js';
 import { write } from '@wyvr/generator/src/utils/file.js';
@@ -22,12 +22,12 @@ export async function onExec({ request, returnData, returnJSON, data }) {
         const content = await readFile(image_path);
         // persist the generated image
         const path = Cwd.get(request.url);
-        Logger.info('fallback media', request.url);
+        logger.info('fallback media', request.url);
         write(path, content);
 
         returnData(content);
     } catch (e) {
-        Logger.error('default image error', e.message);
+        logger.error('default image error', e.message);
         return returnData('media not found', 404);
     }
 }

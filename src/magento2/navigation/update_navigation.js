@@ -1,5 +1,5 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { set } from '@src/magento2/database/navigation.js';
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { url_join } from '@src/shop/core/url.mjs';
@@ -18,7 +18,7 @@ export async function update_navigation() {
             });
             let tree = build_tree(list, store_name, slug);
             if (!tree) {
-                Logger.error('empty categories error updating magento navigation for store', store_id);
+                logger.error('empty categories error updating magento navigation for store', store_id);
                 return undefined;
             }
             // store raw navigation
@@ -37,7 +37,7 @@ export async function update_navigation() {
             // store the processed navigation tree
             set(store_id, tree);
 
-            Logger.info('update magento navigation for store', store_id);
+            logger.info('update magento navigation for store', store_id);
 
             return undefined;
         })

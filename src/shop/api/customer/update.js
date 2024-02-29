@@ -1,16 +1,16 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, put, authOptions } from '@src/shop/api/api';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { get_customer } from '@src/shop/api/customer/get.js';
 
 export async function update_customer(store, id, data, isProd) {
     if (!data || !id) {
-        Logger.error('magento2 update customer, missing data or id', id);
+        logger.error('magento2 update customer, missing data or id', id);
         return [__('shop.internal_error'), undefined];
     }
     const admin_token = await get_admin_token(isProd);
     if (!admin_token) {
-        Logger.error('magento2 update customer, missing admin token');
+        logger.error('magento2 update customer, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
     const [get_error, customer] = await get_customer(store, id, isProd);
@@ -57,11 +57,11 @@ export async function update_customer(store, id, data, isProd) {
     try {
         update_result = await put(put_url, authOptions(admin_token, jsonOptions({ body: { customer } })));
         if (!update_result.ok) {
-            Logger.warning('magento2 update customer, request failed', update_result.status, update_result.statusText, update_result.body);
+            logger.warning('magento2 update customer, request failed', update_result.status, update_result.statusText, update_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {
-        Logger.error(get_error_message(e, token_url, 'magento2 get customer'));
+        logger.error(get_error_message(e, token_url, 'magento2 get customer'));
         return returnJSON({ message: __('shop.internal_error') }, 500);
     }
     // transform extension_attributes to additional

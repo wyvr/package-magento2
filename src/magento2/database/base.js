@@ -1,4 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger } from '@wyvr/generator/universal.js';
 import { Storage } from '@wyvr/generator/src/utils/storage.js';
 import { filled_string, is_string, filled_object } from '@wyvr/generator/src/utils/validate.js';
 import { create_dir } from '@wyvr/generator/src/utils/file.js';
@@ -31,7 +31,7 @@ export async function open_db(db, connection, name, sql_create_table) {
             await connection.exec(sql_create_table);
         }
     } catch (error) {
-        Logger.error(error, name, db);
+        logger.error(error, name, db);
         return undefined;
     }
     return { db, connection };
@@ -44,7 +44,7 @@ export async function close_db(db, connection) {
             connection = undefined;
         }
     } catch (e) {
-        Logger.debug(db, e);
+        logger.debug(db, e);
     }
     if (db) {
         db.connected = false;
@@ -54,12 +54,12 @@ export async function close_db(db, connection) {
 
 export function validate(connection, name) {
     if (!connection) {
-        Logger.error('no connection available, please open connection first e.g. await open()');
+        logger.error('no connection available, please open connection first e.g. await open()');
         return undefined;
     }
     const db_name = sanitize(name);
     if (!db_name) {
-        Logger.error('name is not set or invalid');
+        logger.error('name is not set or invalid');
         return undefined;
     }
     return db_name;

@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, get, authOptions, post, del } from '@src/shop/api/api';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { cart_model } from '@src/shop/api/cart/cart_model';
@@ -15,7 +14,7 @@ export async function update_guest_cart_item(store, cart, sku, qty, is_prod) {
 async function update_item(url, cart, sku, qty, is_prod) {
     const admin_token = await get_admin_token(is_prod);
     if (!admin_token) {
-        Logger.error('magento2 update cart item, missing admin token');
+        logger.error('magento2 update cart item, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
 
@@ -52,11 +51,11 @@ async function update_item(url, cart, sku, qty, is_prod) {
             result = await del(`${url.replace(/\/$/, '')}/${item_id}`, authOptions(admin_token, jsonOptions({})));
         }
         if (!result.ok) {
-            Logger.warning('magento2 update cart item, request failed', result.status, result.statusText, result.body);
+            logger.warning('magento2 update cart item, request failed', result.status, result.statusText, result.body);
             return [result?.body?.message || __('shop.internal_error'), undefined];
         }
     } catch (e) {
-        Logger.error(get_error_message(e, url, 'magento2 update cart item'));
+        logger.error(get_error_message(e, url, 'magento2 update cart item'));
         return [__('shop.internal_error'), undefined];
     }
 

@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, post } from '@src/shop/api/api.js';
 
 export async function login_customer(store, email, password, isProd) {
@@ -22,17 +21,17 @@ export async function login_customer(store, email, password, isProd) {
             })
         );
         if (!token_result.ok) {
-            Logger.warning('magento2 login, customer token request failed', token_result.status, token_result.statusText);
+            logger.warning('magento2 login, customer token request failed', token_result.status, token_result.statusText);
             return [login_error, 403, undefined];
         }
         const token = token_result.body;
         if (!token || typeof token !== 'string') {
-            Logger.warning('magento2 login, empty or wrong token');
+            logger.warning('magento2 login, empty or wrong token');
             return [login_error, 403, undefined];
         }
         return [undefined, undefined, token];
     } catch (e) {
-        Logger.error(get_error_message(e, token_url, 'magento2 login'));
+        logger.error(get_error_message(e, token_url, 'magento2 login'));
         return [internal_error, 500, undefined];
     }
 }

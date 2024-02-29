@@ -1,7 +1,6 @@
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
 import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.mjs';
@@ -15,7 +14,7 @@ export default {
     url: `/[store]/${slug}/[slug]`,
     onExec: async ({ params, query, data, setStatus, returnRedirect, returnJSON, isProd }) => {
         if (!data?.store?.value) {
-            Logger.warning('missing data in product', data.url);
+            logger.warning('missing data in product', data.url);
             return data;
         }
         const product_index_name = `wyvr_product_${data.store.value}`;
@@ -30,7 +29,7 @@ export default {
         try {
             product = product_data[0].product;
         } catch (e) {
-            Logger.error('product convert error', params.slug, get_error_message(e, import.meta.url, 'magento2 product'));
+            logger.error('product convert error', params.slug, get_error_message(e, import.meta.url, 'magento2 product'));
         }
         if (!product) {
             return await onExec({ data, setStatus });
@@ -38,7 +37,7 @@ export default {
         // 1 enabled
         // 2 disabled
         if (product?.status?.value !== '1') {
-            Logger.error('product is disabled', data.url, product.entity_id);
+            logger.error('product is disabled', data.url, product.entity_id);
             data.not_found = true;
             data.avoid_not_found = false;
             data.force_not_found = true;

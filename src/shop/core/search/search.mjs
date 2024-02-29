@@ -2,8 +2,7 @@ import { search } from '@src/shop/core/elasticsearch.mjs';
 import { get_product_query } from '@src/shop/core/search/product.mjs';
 import { get_category_query } from '@src/shop/core/search/category.mjs';
 import { get_page_query } from '@src/shop/core/search/page.mjs';
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import search_product_attributes from '@src/shop/config/search_product_attributes.mjs';
 import { get_suggestions } from '@src/shop/core/search/suggestion.mjs';
 import { transform_result } from '@src/shop/core/search/transform_result.mjs';
@@ -61,7 +60,7 @@ export async function search_execute_index(term, store_id, size, type, query_fn,
         result.hits = transform_result(search_result, type, fn);
         result.suggestion = get_suggestions(search_result);
     } catch (e) {
-        Logger.error('search', type, 'error', term, get_error_message(e, import.meta.url, 'magento2 search'));
+        logger.error('search', type, 'error', term, get_error_message(e, import.meta.url, 'magento2 search'));
     }
     result.timing = new Date().getTime() - start;
     return result;

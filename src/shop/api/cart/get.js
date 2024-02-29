@@ -1,5 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
-import { get_error_message } from '@wyvr/generator/src/utils/error.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, get, authOptions } from '@src/shop/api/api';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { cart_model } from '@src/shop/api/cart/cart_model';
@@ -15,7 +14,7 @@ export async function get_guest_cart(store, cart_id, is_prod) {
 async function load_cart(url, is_guest, cart_id, is_prod) {
     const admin_token = await get_admin_token(is_prod);
     if (!admin_token) {
-        Logger.error('magento2 get cart, missing admin token');
+        logger.error('magento2 get cart, missing admin token');
         return [__('shop.internal_error'), undefined];
     }
 
@@ -23,11 +22,11 @@ async function load_cart(url, is_guest, cart_id, is_prod) {
     try {
         get_result = await get(url, authOptions(admin_token, jsonOptions({})));
         if (!get_result.ok) {
-            Logger.warning('magento2 get cart, request failed', get_result.status, get_result.statusText, get_result.body);
+            logger.warning('magento2 get cart, request failed', get_result.status, get_result.statusText, get_result.body);
             return [__('shop.internal_error'), undefined];
         }
     } catch (e) {
-        Logger.error(get_error_message(e, token_url, 'magento2 get cart'));
+        logger.error(get_error_message(e, token_url, 'magento2 get cart'));
         return returnJSON({ message: __('shop.internal_error') }, 500);
     }
     return [undefined, cart_model(is_guest, cart_id, get_result?.body)];

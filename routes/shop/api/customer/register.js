@@ -1,4 +1,4 @@
-import { Logger } from '@wyvr/generator/src/utils/logger.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, post } from '@src/shop/api/api';
 import { get_form_body_value } from '@src/shop/api-client/get_form_body_value';
 import { register_allowed_fields } from '@src/shop/config/register_allowed_fields';
@@ -70,11 +70,11 @@ export default {
                 })
             );
             if (!register_result.ok) {
-                Logger.warning('magento2 register, customer create request failed', register_result.status, register_result.statusText, register_result.body);
+                logger.warning('magento2 register, customer create request failed', register_result.status, register_result.statusText, register_result.body);
                 return returnJSON({ message: __('shop_register.error') }, register_result.status);
             }
         } catch (e) {
-            Logger.error(get_error_message(e, token_url, 'magento2 register'));
+            logger.error(get_error_message(e, token_url, 'magento2 register'));
             return returnJSON({ message: __('shop.internal_error') }, 500);
         }
 
