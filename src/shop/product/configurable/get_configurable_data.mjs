@@ -1,5 +1,6 @@
 import { get_attribute_value } from '@src/shop/core/attributes.mjs';
 import { get_stock } from '@src/shop/core/product/get_stock.mjs';
+import { logger } from '@wyvr/generator/universal.js';
 
 export function get_configurable_data(configurable_options, configurable_products) {
     /*
@@ -27,6 +28,7 @@ export function get_configurable_data(configurable_options, configurable_product
     }
     */
     if (!configurable_options || typeof configurable_options !== 'object' || Array.isArray(configurable_options) || !Array.isArray(configurable_products)) {
+        logger.error('get_configurable_data: invalid input');
         return undefined;
     }
 
@@ -85,7 +87,7 @@ export function get_configurable_data(configurable_options, configurable_product
                     for (const attribute_code of attributes) {
                         // ignore the current attribute of the option
                         if (attribute_code === option.attribute_code) {
-                            return;
+                            continue;
                         }
                         if (!enabled_options[attribute_code]) {
                             enabled_options[attribute_code] = [];
@@ -146,6 +148,5 @@ export function get_configurable_data(configurable_options, configurable_product
             return result;
         })
         .filter((x) => x);
-
     return data;
 }
