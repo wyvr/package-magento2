@@ -102,3 +102,15 @@ export function get_product_sku_query(store_id, sku) {
         }
     };
 }
+
+export function get_product_skus_query(store_id, skus) {
+    return {
+        index: get_product_index_name(store_id),
+        size: 1,
+        query: {
+            terms: {
+                sku: skus.map((sku) => sku.toLowerCase())
+            }
+        }
+    };
+}
