@@ -31,11 +31,16 @@ export default {
             return returnJSON([], 400);
         }
 
-        const query = get_product_skus_query(magento_data?.store?.value, skus);
+        const batches = [];
+        const batch_size = 10000;
+        for (let i = 0; i < skus.length; i += batch_size) {
+            const sku_batch = skus.slice(i, i + batch_size);
+            batches.push(get_product_skus_query(magento_data?.store?.value, sku_batch));
+        }
 
-        const result = await search(query);
+        const results = await Promise.all(batches.map((query) => search(query)));
 
-        const products = result?.hits?.hits?.map((x) => x?._source?.product).filter(Boolean);
+        const products = results.flatMap((result) => result?.hits?.hits?.map((x) => x?._source?.product).filter(Boolean));
 
         if (!Array.isArray(products)) {
             return returnJSON([], 400);
