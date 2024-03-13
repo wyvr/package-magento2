@@ -1,7 +1,7 @@
-import { is_string } from '@wyvr/generator/src/utils/validate.js';
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 
 import * as DB from '@src/magento2/database/customer.js';
+import { get_token } from '@src/shop/api/customer/get_token';
 
 export async function valid(email, token) {
     const error_message = __('customer.invalid_error');
@@ -31,13 +31,11 @@ export async function valid(email, token) {
         return [error_message, customer];
     }
     // get token from header
-    if (is_string(token)) {
-        token = token.replace(/^bearer /i, '');
-    }
+    const customer_token = get_token(token);
 
     // validate token
-    if (!login_data.token || login_data.token !== token) {
-        logger.error('invalid token for customer', email, token);
+    if (!login_data.token || login_data.token !== customer_token) {
+        logger.error('invalid token for customer', email, customer_token);
         return [error_message, customer];
     }
 
