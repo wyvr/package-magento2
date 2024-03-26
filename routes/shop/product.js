@@ -22,7 +22,7 @@ export default {
         const product_data = await load_data(product_index_name, {
             url: params.slug
         });
-        if (!Array.isArray(product_data) || product_data.length == 0) {
+        if (!Array.isArray(product_data) || product_data.length === 0) {
             return await onExec({ data, setStatus });
         }
         let product;
