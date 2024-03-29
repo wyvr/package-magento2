@@ -54,7 +54,7 @@ export async function clear_all_urls(index) {
     }
     logger.warning('clear whole cache');
     if (total_routes && total_routes.length > 0) {
-        logger.info('clear', total_routes.length, 'generated routes');
+        logger.log('clear', total_routes.length, 'generated routes');
         for (const file of total_routes) {
             remove(url_join(ReleasePath.get(), file));
         }
@@ -64,7 +64,7 @@ export async function clear_all_urls(index) {
 
     // rebuild pages
     if (pages && pages.length > 0) {
-        logger.info('generate', pages.length, 'pages');
+        logger.log('generate', pages.length, 'pages');
         logger.debug('page urls', pages);
         for (const url of pages) {
             await execute_page(url);
@@ -124,13 +124,14 @@ export async function generate_routes(urls) {
         const chunks = get_chunks(urls, chunk_size);
         const release_path = ReleasePath.get();
         // process urls in chunks
-        logger.info('generate', urls.length, 'routes');
+        logger.log('generate', urls.length, 'routes');
         for (let i = 0, len = chunks.length; i < len; i++) {
             logger.info('generate chunk', i + 1, 'of', len);
             const chunk = chunks[i];
             await Promise.all(
                 chunk.map(async (url) => {
                     // delete before the route is requested
+                    logger.log('- generate route', url);
                     remove(join(release_path, url));
                     const [error, ok] = await trigger_url(url_join(domain, url));
                     if (error) {
@@ -140,7 +141,7 @@ export async function generate_routes(urls) {
                 })
             );
         }
-        logger.info('done', urls.length, 'routes');
+        logger.log('done', urls.length, 'routes');
     }
 }
 

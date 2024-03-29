@@ -52,7 +52,7 @@ export default async function () {
     }
 
     const default_size = 25;
-    let size = parseInt(get_config('magento2.cache.regenerate_size', default_size), 10);
+    let size = Number.parseInt(get_config('magento2.cache.regenerate_size', default_size), 10);
     if (Number.isNaN(size)) {
         size = default_size;
     }
