@@ -1,3 +1,4 @@
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
 import { VISIBILITY_IN_CATALOG, VISIBILITY_BOTH } from '@src/shop/core/search/product.mjs';
 import { reduce_attributes, get_attribute_value } from '@src/shop/core/attributes.mjs';
@@ -5,28 +6,30 @@ import { reduce_attributes, get_attribute_value } from '@src/shop/core/attribute
 export function transform_elasticsearch_products(products) {
     return products
         .map((product_data) => {
-            if (product_data) {
-                const visibility = get_attribute_value(product_data, 'visibility');
-                const status = get_attribute_value(product_data, 'status');
-                if (status != '1' || (visibility != VISIBILITY_IN_CATALOG && visibility != VISIBILITY_BOTH)) {
+            try {
+                if (product_data) {
+                    const visibility = Number.parseInt(get_attribute_value(product_data, 'visibility') ?? '0');
+                    const status = `${get_attribute_value(product_data, 'status')}`;
+                    if (status !== '1' || ![VISIBILITY_IN_CATALOG, VISIBILITY_BOTH].includes(visibility)) {
+                        return undefined;
+                    }
+                }
+                const product = {};
+                for (const key of Object.keys(product_data)) {
+                    if (category_product_attributes.includes(key)) {
+                        product[key] = product_data[key];
+                    }
+                }
+
+                // hide configurable products that have no simples attached
+                if (product_data?.type_id === 'configurable' && product_data?.configurable_products?.length === 0) {
                     return undefined;
                 }
+                return reduce_attributes(product, category_product_attributes);
+            } catch (e) {
+                logger.error(get_error_message(e, import.meta.url, 'tranform_elasticsearch_products'));
+                return undefined;
             }
-            const product = {};
-            Object.keys(product_data)
-                .filter((key) => category_product_attributes.indexOf(key) > -1)
-                .forEach((key) => {
-                    if (key == 'configurable_products') {
-                        const child_products = product_data.configurable_products
-                            .map((child_product) => reduce_attributes(child_product, category_product_attributes))
-                            .filter((x) => x);
-
-                        product[key] = child_products;
-                        return;
-                    }
-                    product[key] = product_data[key];
-                });
-            return reduce_attributes(product, category_product_attributes);
         })
         .filter(Boolean);
 }
