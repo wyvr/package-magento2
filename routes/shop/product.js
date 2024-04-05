@@ -5,6 +5,7 @@ import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.mjs';
 import { url_join, object_to_query_param } from '@src/shop/core/url.mjs';
+import { get_attribute_value } from '@src/shop/core/attributes.mjs';
 
 const domain = Config.get('url');
 const slug = Config.get('shop.slug.product', 'product');
@@ -94,8 +95,11 @@ export default {
             return _wyvr({ data });
         }
 
-        const type = data.product.type_id.charAt(0).toUpperCase() + data.product.type_id.slice(1);
-        const sku = typeof data.product.sku === 'string' ? data.product.sku : data.product.sku.value;
+        let type = 'Unknown';
+        if (typeof data?.product?.type_id === 'string') {
+            type = data.product.type_id.charAt(0).toUpperCase() + data.product.type_id.slice(1);
+        }
+        const sku = get_attribute_value(data?.product, 'sku');
 
         return {
             ...(data?._wyvr ?? {}),
@@ -106,10 +110,10 @@ export default {
             }
         };
     },
-    title: ({ params, data }) => data.product?.name?.value || params.slug,
+    title: ({ params, data }) => get_attribute_value(data.product, 'name') || params.slug,
     meta: ({ params, data }) => {
         const meta = {
-            title: replace_meta_content(data.product?.name?.value || params.slug)
+            title: replace_meta_content(get_attribute_value(data.product, 'name') || params.slug)
         };
         return meta;
     },

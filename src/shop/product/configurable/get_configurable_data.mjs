@@ -37,7 +37,10 @@ export function get_configurable_data(configurable_options, configurable_product
     const sku_stock = {};
     for (const product of configurable_products) {
         const stock = get_stock(product);
-        sku_stock[product.sku.value] = !!(stock.qty > 0 && stock.is_in_stock);
+        const sku = get_attribute_value(product, 'sku');
+        if (sku) {
+            sku_stock[sku] = !!(stock.qty > 0 && stock.is_in_stock);
+        }
     }
 
     // the configurable option attributes
@@ -73,7 +76,7 @@ export function get_configurable_data(configurable_options, configurable_product
                     result.label = option.super_attribute_label;
                 }
 
-                const product = configurable_products.find((product) => product.sku.value === option.sku);
+                const product = configurable_products.find((product) => get_attribute_value(product, 'sku') === option.sku);
 
                 const in_stock = sku_stock[option.sku];
                 let enabled_options = null;
