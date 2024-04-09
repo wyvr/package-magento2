@@ -117,6 +117,26 @@ export async function search(data) {
     }
 }
 
+export async function create_index(index, mapping) {
+    const exists = await exists_index(index);
+    if (!exists) {
+        logger.info('create index', index);
+        await get_client().indices.create({ index, body: { mappings: { properties: mapping } } });
+        // $indices = $this->elasticSearchClient->indices();
+        // $indices->create(['index' => $indexName, 'body' => ['mappings' => ['properties' => $mapping]]]);
+    }
+    return exists;
+}
+
+export async function count_index(index) {
+    try {
+        const count_response = await get_client().count({ index });
+        return count_response?.count ?? 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
 export async function del(index, id) {
     const data = { id, index };
     try {
