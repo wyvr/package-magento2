@@ -6,7 +6,7 @@ import { object_to_query_param } from '@src/shop/core/url.mjs';
 export async function onExec({ data, query, setStatus, returnRedirect, isProd }) {
     // redirect from root to default store when accessed directly
     const default_store = Config.get('shop.default_store');
-    if (data.url == '/' && default_store) {
+    if (data.url === '/' && default_store) {
         return returnRedirect(`/${default_store}/${object_to_query_param(query)}`, isProd ? 301 : 302);
     }
 
@@ -19,16 +19,16 @@ export async function onExec({ data, query, setStatus, returnRedirect, isProd })
     if (store_id == null) {
         return data;
     }
-    const no_route = await get(store_id, 'web.default.cms_no_route', `magento 2 not found in store`);
+    const no_route = await get(store_id, 'web.default.cms_no_route', 'magento 2 not found in store');
     if (!no_route) {
         return data;
     }
 
     const page_data = await get_page_by_url(store_id, no_route);
 
-    Object.keys(page_data).forEach((key) => {
+    for (const key of Object.keys(page_data)) {
         data[key] = page_data[key];
-    });
+    }
 
     return data;
 }
