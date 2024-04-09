@@ -24,7 +24,7 @@ export async function create_cart(store, email, customer_id, isProd) {
         email,
         customer_id,
         id: undefined,
-        valid_until: new Date().getTime() + 60000
+        valid_until: new Date().getTime() + 60000 // cache time 1 minute
     };
     if (loaded_id) {
         cart.id = loaded_id;
