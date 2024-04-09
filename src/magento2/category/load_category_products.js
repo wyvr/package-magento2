@@ -1,5 +1,6 @@
 import { load_data } from '@src/shop/core/elasticsearch.mjs';
 import { transform_elasticsearch_products } from '@src/magento2/core/transform_elasticsearch_products.js';
+import { get_error_message } from '@wyvr/generator/universal.js';
 
 export async function load_category_products(id, store_id) {
     if (!id || store_id === undefined) {
@@ -15,6 +16,6 @@ export async function load_category_products(id, store_id) {
     try {
         return [undefined, transform_elasticsearch_products(cache_data[0].products)];
     } catch (e) {
-        return [e, undefined];
+        return [get_error_message(e, import.meta.url, 'load category product'), undefined];
     }
 }
