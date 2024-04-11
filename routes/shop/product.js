@@ -50,11 +50,9 @@ export default {
             const configurable_product = product.parent_products.find((product) => product.url_key);
             product.redirect_simple_to_configurable = true;
             const status = isProd ? 301 : 302;
-            const configurable_url = url_join(`https://${domain.replace(/https?:\/\//, '')}`, params.store, slug, configurable_product.url_key) + object_to_query_param(query);
+            const configurable_url = `${url_join(`https://${domain.replace(/https?:\/\//, '')}`, params.store, slug, configurable_product.url_key) + object_to_query_param(query)}#redirect_from_simple=${params.slug}`;
 
-            return returnRedirect(configurable_url, status, {
-                'set-cookie': `redirect_from_simple=${params.slug}; path=/${params.store};`
-            });
+            return returnRedirect(configurable_url, status);
         }
         // add missing configurable products to the configurable, because they can be eather a small object with missing properties or the entity id
         if (product.type_id === 'configurable') {
