@@ -4,11 +4,11 @@ import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
 import { cart_model } from '@src/shop/api/cart/cart_model';
 
 export async function update_cart_item(store, cart, sku, qty, is_prod) {
-    const url = magentoUrl(`/rest/all/V1/carts/${cart.cart_id}/items`);
+    const url = magentoUrl(`/rest/${store}/V1/carts/${cart.cart_id}/items`);
     return await update_item(url, cart, sku, qty, is_prod);
 }
 export async function update_guest_cart_item(store, cart, sku, qty, is_prod) {
-    const url = magentoUrl(`/rest/all/V1/guest-carts/${cart.cart_id}/items`);
+    const url = magentoUrl(`/rest/${store}/V1/guest-carts/${cart.cart_id}/items`);
     return await update_item(url, cart, sku, qty, is_prod);
 }
 async function update_item(url, cart, sku, qty, is_prod) {
