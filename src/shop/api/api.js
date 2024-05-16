@@ -124,7 +124,9 @@ export function magentoUrl(url) {
     if (!domain) {
         return url;
     }
-    return `${domain.trim().replace(/\/$/, '')}/${url.trim().replace(/^\//, '')}`;
+    const magento_url = `${domain.trim().replace(/\/$/, '')}/${url.trim().replace(/^\//, '')}`;
+    logger.debug('magento request', magento_url);
+    return magento_url;
 }
 export function appendSearchCriteriaToUrl(url, search_criteria, propName = 'searchCriteria') {
     const seperator = url.indexOf('?') > -1 ? '&' : '?';
