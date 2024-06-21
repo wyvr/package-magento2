@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div>
-                    <label for="oar-order-id">{__('shop.order_id')}</label>
+                    <label for="oar-order-id">{__('shop.order_number')}</label>
 
                     <div class="control">
                         <input
