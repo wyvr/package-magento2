@@ -136,12 +136,12 @@ export function appendSearchCriteriaToUrl(url, search_criteria, propName = 'sear
         Object.keys(search_criteria)
             .map((key) => {
                 if (key === 'filter') {
-                    const name = `${propName}[filterGroups][0][filters]`;
+                    const name = `${propName}[filterGroups]`;
                     return search_criteria[key]
                         .map((filter, index) => {
                             return Object.keys(filter)
                                 .map((filter_key) => {
-                                    return getSearchCriteriaParam(`${name}[${index}][${filter_key}]`, search_criteria[key][index][filter_key]);
+                                    return getSearchCriteriaParam(`${name}[${index}][filters][0][${filter_key}]`, search_criteria[key][index][filter_key]);
                                 })
                                 .join('&');
                         })
