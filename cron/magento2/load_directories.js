@@ -1,4 +1,6 @@
-import { get_config, logger, get_error_message } from '@wyvr/generator/universal.js';
+import { get_config } from '@wyvr/generator/cron.js';
+import { logger, get_error_message } from '@wyvr/generator/universal.js';
+
 
 import {
     filled_array,
