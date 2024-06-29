@@ -2,11 +2,11 @@ import { execute_page, get_config } from '@wyvr/generator/cron.js';
 import { logger } from '@wyvr/generator/universal.js';
 import { read, write, remove, read_json, to_index } from '@wyvr/generator/src/utils/file.js';
 import { filled_string, filled_array } from '@wyvr/generator/src/utils/validate.js';
-import { del, get_client, exists_index, clear_index } from '@src/shop/core/elasticsearch.mjs';
+import { del, get_client, exists_index, clear_index } from '@src/shop/core/elasticsearch.js';
 import { uniq_values } from '@wyvr/generator/src/utils/uniq.js';
 import { ReleasePath } from '@wyvr/generator/src/vars/release_path.js';
 import { Cwd } from '@wyvr/generator/src/vars/cwd.js';
-import { url_join } from '@src/shop/core/url.mjs';
+import { url_join } from '@src/shop/core/url.js';
 import { WorkerController } from '@wyvr/generator/src/worker/controller.js';
 import { join } from 'path';
 
@@ -77,7 +77,7 @@ export async function clear_all_urls(index) {
 /**
  *
  * @param {string} index elasticsearch index name
- * @param {import('../../../cron/magento2/clear_caches.mjs').WyvrClearDoc|null} data_docs
+ * @param {import('../../../cron/magento2/clear_caches.js').WyvrClearDoc|null} data_docs
  * @returns {void}
  */
 export async function clear_urls(index, data_docs) {

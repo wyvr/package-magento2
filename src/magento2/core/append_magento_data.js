@@ -1,4 +1,4 @@
-import { get_magento_data } from '@src/magento2/core/data.mjs';
+import { get_magento_data } from '@src/magento2/core/data.js';
 
 export async function append_magento_data(url, append_to) {
     const magento_data = await get_magento_data(url);

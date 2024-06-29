@@ -1,11 +1,11 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { get_magento_data } from '@src/magento2/core/data.mjs';
-import { get_catalog_products_query } from '@src/shop/core/search/product.mjs';
-import { search } from '@src/shop/core/elasticsearch.mjs';
-import { get_attribute_value, reduce_attributes } from '@src/shop/core/attributes.mjs';
-import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
-import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
-import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
+import { get_magento_data } from '@src/magento2/core/data.js';
+import { get_catalog_products_query } from '@src/shop/core/search/product.js';
+import { search } from '@src/shop/core/elasticsearch.js';
+import { get_attribute_value, reduce_attributes } from '@src/shop/core/attributes.js';
+import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
+import { get_cache, set_cache } from '@src/shop/core/cache.js';
+import category_product_attributes from '@src/shop/config/category_product_attributes.js';
 
 export default {
     url: '/[store]/api/query_products/',

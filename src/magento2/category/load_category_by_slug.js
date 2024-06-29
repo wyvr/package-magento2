@@ -1,5 +1,5 @@
 import { get_config } from '@wyvr/generator/cron.js';
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 
 export async function load_category_by_slug(slug, store_id) {
     if (!slug || store_id === undefined) {

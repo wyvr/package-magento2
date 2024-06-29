@@ -1,4 +1,4 @@
-import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
+import { get_cache, set_cache } from '@src/shop/core/cache.js';
 
 export const name = 'magento_directory';
 

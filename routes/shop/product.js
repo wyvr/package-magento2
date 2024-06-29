@@ -1,11 +1,11 @@
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
-import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.mjs';
-import { url_join, object_to_query_param } from '@src/shop/core/url.mjs';
-import { get_attribute_value } from '@src/shop/core/attributes.mjs';
+import { replace_meta_content } from '@src/shop/core/meta/replace_meta_content.js';
+import { url_join, object_to_query_param } from '@src/shop/core/url.js';
+import { get_attribute_value } from '@src/shop/core/attributes.js';
 
 const domain = Config.get('url');
 const slug = Config.get('shop.slug.product', 'product');

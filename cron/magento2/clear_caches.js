@@ -1,6 +1,6 @@
 import { get_config } from '@wyvr/generator/cron.js';
 import { logger } from '@wyvr/generator/universal.js';
-import { exists_index, get_client, search } from '@src/shop/core/elasticsearch.mjs';
+import { exists_index, get_client, search } from '@src/shop/core/elasticsearch.js';
 import { clear_all_urls, clear_urls, index } from '@src/magento2/core/clear_caches.js';
 
 /**

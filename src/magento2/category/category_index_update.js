@@ -1,8 +1,8 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 import { set } from '@src/magento2/database/navigation.js';
 import { logger } from '@wyvr/generator/universal.js';
-import { url_join } from '@src/shop/core/url.mjs';
+import { url_join } from '@src/shop/core/url.js';
 
 export async function category_index_update() {
     const stores = Config.get('shop.stores');

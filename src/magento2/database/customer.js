@@ -1,4 +1,4 @@
-import { open_db, get_by_key, set_data, query_all, close_db } from './base';
+import { open_db, get_by_key, set_data, query_all, close_db } from '@src/magento2/database/base';
 
 let db;
 let connection;

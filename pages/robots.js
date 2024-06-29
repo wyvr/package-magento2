@@ -1,4 +1,4 @@
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { logger } from '@wyvr/generator/universal.js';
 

@@ -1,11 +1,11 @@
-import { search } from '@src/shop/core/elasticsearch.mjs';
-import { get_product_query } from '@src/shop/core/search/product.mjs';
-import { get_category_query } from '@src/shop/core/search/category.mjs';
-import { get_page_query } from '@src/shop/core/search/page.mjs';
+import { search } from '@src/shop/core/elasticsearch.js';
+import { get_product_query } from '@src/shop/core/search/product.js';
+import { get_category_query } from '@src/shop/core/search/category.js';
+import { get_page_query } from '@src/shop/core/search/page.js';
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
-import search_product_attributes from '@src/shop/config/search_product_attributes.mjs';
-import { get_suggestions } from '@src/shop/core/search/suggestion.mjs';
-import { transform_result } from '@src/shop/core/search/transform_result.mjs';
+import search_product_attributes from '@src/shop/config/search_product_attributes.js';
+import { get_suggestions } from '@src/shop/core/search/suggestion.js';
+import { transform_result } from '@src/shop/core/search/transform_result.js';
 
 export async function search_execute(term, store_id, size) {
     const search_term = (term === undefined || term === null ? '' : term).toLowerCase();

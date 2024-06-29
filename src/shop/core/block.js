@@ -1,4 +1,4 @@
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 
 export async function get_block_by_id(store_id, block_id) {
     if (store_id === undefined || block_id === undefined) {

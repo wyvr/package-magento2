@@ -1,9 +1,9 @@
 import { jsonOptions, magentoUrl, request, authOptions } from '@src/shop/api/api';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { logger } from '@wyvr/generator/universal.js';
 import { sleep_random } from '@src/shop/api/sleep.js';
-import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
-import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.mjs';
+import { get_cache, set_cache } from '@src/shop/core/cache.js';
+import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.js';
 
 export default {
     url: '/[store]/api/product/live/[sku]',

@@ -1,6 +1,6 @@
 import { strictEqual, deepStrictEqual } from 'assert';
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { replace_content } from './replace_content.mjs';
+import { replace_content } from './replace_content.js';
 
 describe('magento2/core/replace_content', () => {
     it('null content', async () => {

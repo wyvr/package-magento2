@@ -1,5 +1,5 @@
-import { get_page_by_url } from '@src/magento2/core/data.mjs';
-import { get } from '@src/shop/core/settings.mjs';
+import { get_page_by_url } from '@src/magento2/core/data.js';
+import { get } from '@src/shop/core/settings.js';
 
 export async function append_home_page(url, store_id, append_to, redirect_fn) {
     const home_route = await get(store_id, 'web.default.cms_home_page', `magento 2 home route`);

@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher, onMount } from 'svelte';
-    import { get_attribute_value } from '@src/shop/core/attributes.mjs';
+    import { get_attribute_value } from '@src/shop/core/attributes.js';
     import { liveProduct } from '@src/magento2/product/live/live_product';
     wyvr: {
         render: 'hydrate';

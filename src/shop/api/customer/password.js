@@ -1,9 +1,9 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, put, authOptions } from '@src/shop/api/api';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { get_customer } from '@src/shop/api/customer/get.js';
-import { login_customer } from './login';
-import { replaceParameters } from '../api';
+import { login_customer } from '@src/shop/api/customer/login';
+import { replaceParameters } from '@src/shop/api/api';
 
 export async function change_password(store, id, email, data, isProd) {
     const save_error = __('account.error_saving');

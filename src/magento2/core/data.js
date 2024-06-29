@@ -1,7 +1,7 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { get } from '@src/shop/core/settings.mjs';
-import { replace_content } from '@src/magento2/core/replace_content.mjs';
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { get } from '@src/shop/core/settings.js';
+import { replace_content } from '@src/magento2/core/replace_content.js';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 
 const locale_cache = {};
 const currency_cache = {};

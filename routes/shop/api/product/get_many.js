@@ -1,6 +1,6 @@
-import { get_magento_data } from '@src/magento2/core/data.mjs';
-import { search } from '@src/shop/core/elasticsearch.mjs';
-import { get_product_skus_query } from '@src/shop/core/search/product.mjs';
+import { get_magento_data } from '@src/magento2/core/data.js';
+import { search } from '@src/shop/core/elasticsearch.js';
+import { get_product_skus_query } from '@src/shop/core/search/product.js';
 
 /**
  * @WARN uncacheable entpoint

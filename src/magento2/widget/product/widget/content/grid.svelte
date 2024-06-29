@@ -1,9 +1,9 @@
 <script>
     import { get_domain } from '@src/shop/api-client/get_domain';
     import { get_store } from '@src/shop/api-client/get_store';
-    import { url_join } from '@src/shop/core/url.mjs';
+    import { url_join } from '@src/shop/core/url.js';
     import ProductsSlider from '@src/shop/component/ProductsSlider.svelte';
-    import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
+    import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
     import { encode_conditions } from '@src/shop/core/widgets/encode_conditions';
     import { onMount } from 'svelte';
 

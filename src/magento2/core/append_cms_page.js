@@ -1,4 +1,4 @@
-import { get_page_by_url } from '@src/magento2/core/data.mjs';
+import { get_page_by_url } from '@src/magento2/core/data.js';
 
 export async function append_cms_page(url, store_id, append_to) {
     if (!url) {

@@ -1,6 +1,6 @@
-import { append_magento_data } from '@src/magento2/core/append_magento_data.mjs';
-import { append_cms_page } from '@src/magento2/core/append_cms_page.mjs';
-import { append_home_page } from '@src/magento2/core/append_home_page.mjs';
+import { append_magento_data } from '@src/magento2/core/append_magento_data.js';
+import { append_cms_page } from '@src/magento2/core/append_cms_page.js';
+import { append_home_page } from '@src/magento2/core/append_home_page.js';
 
 export default {
     construct_route_context: {

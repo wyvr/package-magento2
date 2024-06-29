@@ -1,5 +1,5 @@
-import { get_attribute_value } from '../attributes.mjs';
-import { default_stock } from '@src/shop/core/product/default_stock.mjs';
+import { get_attribute_value } from '@src/shop/core/attributes.js';
+import { default_stock } from '@src/shop/core/product/default_stock.js';
 
 export function get_stock(product) {
     // get stock of product itself

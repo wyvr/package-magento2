@@ -1,7 +1,7 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
-import category_product_attributes from '@src/shop/config/category_product_attributes.mjs';
-import { VISIBILITY_IN_CATALOG, VISIBILITY_BOTH } from '@src/shop/core/search/product.mjs';
-import { reduce_attributes, get_attribute_value } from '@src/shop/core/attributes.mjs';
+import category_product_attributes from '@src/shop/config/category_product_attributes.js';
+import { VISIBILITY_IN_CATALOG, VISIBILITY_BOTH } from '@src/shop/core/search/product.js';
+import { reduce_attributes, get_attribute_value } from '@src/shop/core/attributes.js';
 
 export function transform_elasticsearch_products(products) {
     return products

@@ -1,4 +1,4 @@
-import admin_token_update from '@src/shop/logic/admin_token_update.mjs';
+import admin_token_update from '@src/shop/logic/admin_token_update.js';
 import { category_index_update } from '@src/magento2/category/category_index_update.js';
 import { update_navigation } from '@src/magento2/navigation/update_navigation.js';
 import { shop_symlink } from '@src/magento2/logic/shop_symlink.js';

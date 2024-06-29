@@ -1,6 +1,6 @@
 import { EnvType } from '@wyvr/generator/src/struc/env.js';
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { DemoPage } from '@src/shop/core/demo_page.mjs';
+import { DemoPage } from '@src/shop/core/demo_page.js';
 
 export default async function (data) {
     const config = Config.get('magento2');

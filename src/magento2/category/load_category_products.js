@@ -1,4 +1,4 @@
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 import { transform_elasticsearch_products } from '@src/magento2/core/transform_elasticsearch_products.js';
 import { get_error_message } from '@wyvr/generator/universal.js';
 

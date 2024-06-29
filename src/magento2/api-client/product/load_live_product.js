@@ -1,5 +1,5 @@
-import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.mjs';
-import { url_join } from '@src/shop/core/url.mjs';
+import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.js';
+import { url_join } from '@src/shop/core/url.js';
 import { get_store } from '@src/shop/api-client/get_store';
 import { get_domain } from '@src/shop/api-client/get_domain';
 

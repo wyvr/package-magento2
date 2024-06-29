@@ -1,5 +1,5 @@
 import { logger } from '@wyvr/generator/universal.js';
-import { jsonOptions, magentoUrl, post } from './api.js';
+import { jsonOptions, magentoUrl, post } from '@src/shop/api/api.js';
 
 export async function admin_token(username, password) {
     const result = await post(

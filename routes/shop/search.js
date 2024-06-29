@@ -1,6 +1,6 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
-import { get } from '@src/shop/core/settings.mjs';
-import { search_execute } from '@src/shop/core/search/search.mjs';
+import { get } from '@src/shop/core/settings.js';
+import { search_execute } from '@src/shop/core/search/search.js';
 
 export default {
     url: '/[store]/search',

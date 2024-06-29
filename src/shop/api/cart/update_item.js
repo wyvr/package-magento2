@@ -1,6 +1,6 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, get, authOptions, post, del } from '@src/shop/api/api';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { cart_model } from '@src/shop/api/cart/cart_model';
 
 export async function update_cart_item(store, cart, sku, qty, is_prod) {

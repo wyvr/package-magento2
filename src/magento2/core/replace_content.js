@@ -1,7 +1,7 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { logger } from '@wyvr/generator/universal.js';
-import { get_block_by_id } from '@src/shop/core/block.mjs';
-import { get } from '@src/shop/core/settings.mjs';
+import { get_block_by_id } from '@src/shop/core/block.js';
+import { get } from '@src/shop/core/settings.js';
 import { exists } from '@wyvr/generator/src/utils/file.js';
 import { FOLDER_GEN_SRC } from '@wyvr/generator/src/constants/folder.js';
 import { parse_tag } from '@wyvr/generator/src/utils/shortcode.js';

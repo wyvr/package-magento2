@@ -1,8 +1,8 @@
-import { get_cache, set_cache } from '@src/shop/core/cache.mjs';
-import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.mjs';
-import { get_magento_data } from '@src/magento2/core/data.mjs';
-import { search } from '@src/shop/core/elasticsearch.mjs';
-import { get_product_sku_query } from '@src/shop/core/search/product.mjs';
+import { get_cache, set_cache } from '@src/shop/core/cache.js';
+import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
+import { get_magento_data } from '@src/magento2/core/data.js';
+import { search } from '@src/shop/core/elasticsearch.js';
+import { get_product_sku_query } from '@src/shop/core/search/product.js';
 
 export default {
     url: '/[store]/api/product/get/[sku]',

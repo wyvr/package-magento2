@@ -3,7 +3,7 @@ import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { appendSearchCriteriaToUrl, authOptions, get, jsonOptions, magentoUrl } from '@src/shop/api/api.js';
 import * as DB from '@src/magento2/database/customer.js';
 import { get_form_body_value } from '@src/shop/api-client/get_form_body_value';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { login_customer } from '@src/shop/api/customer/login';
 
 export default {

@@ -1,7 +1,7 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 
 import { magentoUrl, authOptions, post } from '@src/shop/api/api';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 
 import * as DB from '@src/magento2/database/customer.js';
 import { load_cart } from '@src/shop/api/cart/load';

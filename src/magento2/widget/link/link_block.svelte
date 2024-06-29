@@ -1,6 +1,6 @@
 <script>
-    import { get_page_id_query } from '@src/shop/core/search/page.mjs';
-    import { search } from '@src/shop/core/elasticsearch.mjs';
+    import { get_page_id_query } from '@src/shop/core/search/page.js';
+    import { search } from '@src/shop/core/elasticsearch.js';
 
     export let anchor_text;
     export let title;

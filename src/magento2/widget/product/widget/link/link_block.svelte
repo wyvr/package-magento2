@@ -1,6 +1,6 @@
 <script>
-    import { get_product_id_query } from '@src/shop/core/search/product.mjs';
-    import { search } from '@src/shop/core/elasticsearch.mjs';
+    import { get_product_id_query } from '@src/shop/core/search/product.js';
+    import { search } from '@src/shop/core/elasticsearch.js';
 
     export let anchor_text;
     export let title;

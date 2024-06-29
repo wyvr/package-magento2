@@ -1,6 +1,6 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { jsonOptions, magentoUrl, get, authOptions } from '@src/shop/api/api';
-import { get_admin_token } from '@src/shop/logic/get_admin_token.mjs';
+import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 
 export async function get_customer(store, id, isProd) {
     const admin_token = await get_admin_token(isProd);

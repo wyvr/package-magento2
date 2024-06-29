@@ -1,8 +1,8 @@
 import { Config } from '@wyvr/generator/src/utils/config.js';
 import { logger } from '@wyvr/generator/universal.js';
 import { set } from '@src/magento2/database/navigation.js';
-import { load_data } from '@src/shop/core/elasticsearch.mjs';
-import { url_join } from '@src/shop/core/url.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
+import { url_join } from '@src/shop/core/url.js';
 
 export async function update_navigation() {
     const stores = Config.get('shop.stores');

@@ -1,6 +1,6 @@
 import { logger, get_error_message } from '@wyvr/generator/universal.js';
 import { search_segment } from '@wyvr/generator/src/utils/segment.js';
-import { load_data } from './elasticsearch.mjs';
+import { load_data } from '@src/shop/core/elasticsearch.js';
 
 const cache = {};
 

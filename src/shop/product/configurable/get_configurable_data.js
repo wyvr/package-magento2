@@ -1,5 +1,5 @@
-import { get_attribute_value } from '@src/shop/core/attributes.mjs';
-import { get_stock } from '@src/shop/core/product/get_stock.mjs';
+import { get_attribute_value } from '@src/shop/core/attributes.js';
+import { get_stock } from '@src/shop/core/product/get_stock.js';
 import { logger } from '@wyvr/generator/universal.js';
 
 export function get_configurable_data(configurable_options, configurable_products) {
