@@ -2,19 +2,26 @@ import { Config } from '@wyvr/generator/src/utils/config.js';
 import { get_magento_data } from '@src/magento2/core/data.js';
 import { get_catalog_products_query } from '@src/shop/core/search/product.js';
 import { search } from '@src/shop/core/elasticsearch.js';
-import { get_attribute_value, reduce_attributes } from '@src/shop/core/attributes.js';
+import {
+    get_attribute_value,
+    reduce_attributes,
+} from '@src/shop/core/attributes.js';
 import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
 import { get_cache, set_cache } from '@src/shop/core/cache.js';
 import category_product_attributes from '@src/shop/config/category_product_attributes.js';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/query_products/',
     _wyvr: () => {
         return {
-            methods: ['get']
+            methods: ['get'],
         };
     },
-    onExec: async ({ query, returnJSON, data, isProd }) => {
+    onExec: async ({ params, query, returnJSON, data, isProd }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const timestamp = get_time_stamp_minutes();
 
         let amount = 10;
@@ -37,7 +44,9 @@ export default {
         }
 
         if (isProd) {
-            const cache_key = `${data.url}|amount=${amount}|conditions=${JSON.stringify(conditions)}`;
+            const cache_key = `${
+                data.url
+            }|amount=${amount}|conditions=${JSON.stringify(conditions)}`;
             const cache = get_cache(cache_key);
             if (cache && cache.created >= timestamp) {
                 return returnJSON(cache);
@@ -57,29 +66,41 @@ export default {
         }
 
         // load from elasticsearch
-        const search_query = get_catalog_products_query(magento_data?.store?.value);
+        const search_query = get_catalog_products_query(
+            magento_data?.store?.value
+        );
         const result = await search(search_query);
-        const all_products = (result?.hits?.hits || []).map((x) => x?._source?.product);
+        const all_products = (result?.hits?.hits || []).map(
+            (x) => x?._source?.product
+        );
         const filtered_products = all_products
             .filter((p) => {
                 return conditions.every((c) => {
                     if (c.attribute) {
                         const value = get_attribute_value(p, c.attribute);
-                        return c.operator === '==' || c.operator === undefined ? value === c.value : value !== c.value;
+                        return c.operator === '==' || c.operator === undefined
+                            ? value === c.value
+                            : value !== c.value;
                     }
                 });
             })
-            .sort((a, b) => new Date(b?.created_at || 0).getTime() - new Date(a?.created_at || 0).getTime());
+            .sort(
+                (a, b) =>
+                    new Date(b?.created_at || 0).getTime() -
+                    new Date(a?.created_at || 0).getTime()
+            );
 
         const allowed_attributes = Config.get('shop.attributes.slider.allow');
         const denied_attributes = Config.get('shop.attributes.slider.deny');
 
-        magento_data.products = filtered_products.slice(0, amount).map((p) => reduce_attributes(p, category_product_attributes));
+        magento_data.products = filtered_products
+            .slice(0, amount)
+            .map((p) => reduce_attributes(p, category_product_attributes));
 
         if (isProd) {
             set_cache(cache_key, magento_data);
         }
 
         return returnJSON(magento_data);
-    }
+    },
 };

@@ -1,18 +1,27 @@
-import { jsonOptions, magentoUrl, request, authOptions } from '@src/shop/api/api';
+import {
+    jsonOptions,
+    magentoUrl,
+    request,
+    authOptions,
+} from '@src/shop/api/api';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { logger } from '@wyvr/generator/universal.js';
 import { sleep_random } from '@src/shop/api/sleep.js';
 import { get_cache, set_cache } from '@src/shop/core/cache.js';
 import { get_time_stamp_seconds } from '@src/shop/core/cache_breaker.js';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/product/live/[sku]',
     _wyvr: () => {
         return {
-            methods: ['get']
+            methods: ['get'],
         };
     },
     onExec: async ({ params, data, returnJSON, isProd }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const timestamp = get_time_stamp_seconds();
         const cache = get_cache(data.url);
         if (cache && cache.created > timestamp) {
@@ -31,26 +40,32 @@ export default {
         const requests = [
             {
                 prop: 'stock',
-                url: magentoUrl(`/rest/all/V1/stockItems/${encodeURIComponent(params.sku)}`),
+                url: magentoUrl(
+                    `/rest/all/V1/stockItems/${encodeURIComponent(params.sku)}`
+                ),
                 fn: (result) => {
                     const { qty = 0, is_in_stock = false } = result;
                     return { qty, is_in_stock };
-                }
+                },
             },
             {
                 prop: 'price',
-                url: magentoUrl('/rest/all/V1/products/base-prices-information'),
+                url: magentoUrl(
+                    '/rest/all/V1/products/base-prices-information'
+                ),
                 body: { skus: [params.sku] },
                 method: 'post',
-                fn: getPrice
+                fn: getPrice,
             },
             {
                 prop: 'special_price',
-                url: magentoUrl('/rest/all/V1/products/special-price-information'),
+                url: magentoUrl(
+                    '/rest/all/V1/products/special-price-information'
+                ),
                 body: { skus: [params.sku] },
                 method: 'post',
-                fn: getPrice
-            }
+                fn: getPrice,
+            },
         ];
 
         const updated = {};
@@ -61,7 +76,7 @@ export default {
                     return false;
                 }
                 const config = {
-                    method: entry?.method || 'GET'
+                    method: entry?.method || 'GET',
                 };
                 if (entry.body) {
                     config.body = {};
@@ -71,9 +86,17 @@ export default {
                 }
 
                 try {
-                    const result = await request(entry.url, authOptions(admin_token, jsonOptions(config)));
+                    const result = await request(
+                        entry.url,
+                        authOptions(admin_token, jsonOptions(config))
+                    );
                     if (!result.ok) {
-                        logger.warning('magento2 product, live request failed', entry.url, result.status, result.statusText);
+                        logger.warning(
+                            'magento2 product, live request failed',
+                            entry.url,
+                            result.status,
+                            result.statusText
+                        );
                         return false;
                     }
                     if (typeof entry?.fn === 'function') {
@@ -82,7 +105,11 @@ export default {
                     }
                     updated[entry.prop] = result.body;
                 } catch (e) {
-                    logger.error('magento2 product, live request error', entry.url, e);
+                    logger.error(
+                        'magento2 product, live request error',
+                        entry.url,
+                        e
+                    );
                     return false;
                 }
                 return true;
@@ -94,7 +121,7 @@ export default {
         }
         set_cache(data.url, { created, updated });
         return returnJSON(updated);
-    }
+    },
 };
 
 function getPrice(result) {

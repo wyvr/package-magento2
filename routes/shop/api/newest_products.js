@@ -5,6 +5,7 @@ import { reduce_attributes } from '@src/shop/core/attributes.js';
 import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
 import { get_cache, set_cache } from '@src/shop/core/cache.js';
 import category_product_attributes from '@src/shop/config/category_product_attributes.js';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/newest_products/[flag]/[amount]/',
@@ -14,6 +15,9 @@ export default {
         };
     },
     onExec: async ({ params, returnJSON, data, isProd }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const timestamp = get_time_stamp_minutes();
 
         if (isProd) {

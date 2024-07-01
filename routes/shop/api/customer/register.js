@@ -3,15 +3,19 @@ import { jsonOptions, magentoUrl, post } from '@src/shop/api/api';
 import { get_form_body_value } from '@src/shop/api-client/get_form_body_value';
 import { register_allowed_fields } from '@src/shop/config/register_allowed_fields';
 import { register_required_fields } from '@src/shop/config/register_required_fields';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/customer/register/',
     _wyvr: () => {
         return {
-            methods: ['post']
+            methods: ['post'],
         };
     },
     onExec: async ({ params, returnJSON, body }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const customer = {};
         const errors = [];
         const store = params?.store;
@@ -28,7 +32,11 @@ export default {
                 customer[field] = value;
             }
             if (!value) {
-                errors.push(__('shop.missing_required_field', { name: __(`customer.${name}`) }));
+                errors.push(
+                    __('shop.missing_required_field', {
+                        name: __(`customer.${name}`),
+                    })
+                );
                 return;
             }
             customer[field] = value;
@@ -41,7 +49,9 @@ export default {
                 continue;
             }
             if (value.match(/\P{L}/)) {
-                errors.push(__('shop.invalid_field', { name: __(`customer.${field}`) }));
+                errors.push(
+                    __('shop.invalid_field', { name: __(`customer.${field}`) })
+                );
             }
         }
 
@@ -56,22 +66,30 @@ export default {
                 lastname: customer.lastname,
                 email: customer.email,
                 extension_attributes: {
-                    is_subscribed: customer.newsletter === 'true'
-                }
+                    is_subscribed: customer.newsletter === 'true',
+                },
             },
-            password: customer.password
+            password: customer.password,
         };
 
         try {
             const register_result = await post(
                 register_url,
                 jsonOptions({
-                    body: payload
+                    body: payload,
                 })
             );
             if (!register_result.ok) {
-                logger.warning('magento2 register, customer create request failed', register_result.status, register_result.statusText, register_result.body);
-                return returnJSON({ message: __('shop_register.error') }, register_result.status);
+                logger.warning(
+                    'magento2 register, customer create request failed',
+                    register_result.status,
+                    register_result.statusText,
+                    register_result.body
+                );
+                return returnJSON(
+                    { message: __('shop_register.error') },
+                    register_result.status
+                );
             }
         } catch (e) {
             logger.error(get_error_message(e, token_url, 'magento2 register'));
@@ -80,7 +98,7 @@ export default {
 
         return returnJSON({
             message: __('shop_register.success', customer),
-            email: customer.email
+            email: customer.email,
         });
-    }
+    },
 };

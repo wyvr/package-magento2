@@ -3,6 +3,7 @@ import { get_time_stamp_minutes } from '@src/shop/core/cache_breaker.js';
 import { get_magento_data } from '@src/magento2/core/data.js';
 import { search } from '@src/shop/core/elasticsearch.js';
 import { get_product_sku_query } from '@src/shop/core/search/product.js';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/product/get/[sku]',
@@ -12,6 +13,9 @@ export default {
         };
     },
     onExec: async ({ params, data, returnJSON, isProd }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const timestamp = get_time_stamp_minutes();
 
         if (isProd) {

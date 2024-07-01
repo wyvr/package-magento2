@@ -5,6 +5,7 @@ import * as DB from '@src/magento2/database/customer.js';
 import { get_form_body_value } from '@src/shop/api-client/get_form_body_value';
 import { get_admin_token } from '@src/shop/logic/get_admin_token.js';
 import { login_customer } from '@src/shop/api/customer/login';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/api/customer/login/',
@@ -13,7 +14,10 @@ export default {
             methods: ['post']
         };
     },
-    onExec: async ({ params, returnJSON, setStatus, body, isProd }) => {
+    onExec: async ({ params, returnJSON, body, isProd }) => {
+        if (!validate_store(params?.store)) {
+            return returnJSON({}, 404);
+        }
         const internal_error = __('shop.internal_error');
         const login_error = __('customer.login_error');
         const email = get_form_body_value(body?.email);

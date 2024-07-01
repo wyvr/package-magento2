@@ -1,5 +1,6 @@
 import { get } from '@src/shop/core/settings.js';
 import { search_execute } from '@src/shop/core/search/search.js';
+import { validate_store } from '@src/shop/core/validate_store.js';
 
 export default {
     url: '/[store]/search/instant',
@@ -9,9 +10,8 @@ export default {
         };
     },
     onExec: async ({ body, params, returnJSON, data }) => {
-        const store_id = data?.store?.value;
-        if (!store_id) {
-            return returnJSON({ message: __('shop..internal_error') }, 500);
+        if (!validate_store(params?.store)) {
+            return returnJSON({ message: __('shop.internal_error') }, 500);
         }
         const date = new Date();
 

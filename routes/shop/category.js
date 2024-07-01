@@ -4,44 +4,59 @@ import { onExec } from '@src/magento2/core/not_found_exec.js';
 import { _wyvr } from '@src/magento2/core/not_found_wyvr.js';
 import { load_category_by_slug } from '@src/magento2/category/load_category_by_slug.js';
 import { load_category_products } from '@src/magento2/category/load_category_products.js';
+import { redirectInvalidStoreRoute } from '@src/shop/route/redirectInvalidStoreRoute.js';
 
 const slug = get_config('shop.slug.category', 'category');
 export default {
     url: `/[store]/${slug}/[slug]`,
-    onExec: async ({ request, params, data, setStatus }) => {
-        if (!data?.store?.value) {
-            logger.warning('missing store id in category', data.url);
-            return data;
-        }
+    onExec: async (context) =>
+        await redirectInvalidStoreRoute(
+            context,
+            async ({ request, params, data, setStatus }) => {
+                if (!data?.store?.value) {
+                    logger.warning('missing store id in category', data.url);
+                    return data;
+                }
 
-        const store_id = data.store.value;
+                const store_id = data.store.value;
 
-        const [category_error, category] = await load_category_by_slug(params.slug, store_id);
+                const [category_error, category] = await load_category_by_slug(
+                    params.slug,
+                    store_id
+                );
 
-        if (category_error) {
-            logger.error(category_error);
-            return await onExec({ data, setStatus });
-        }
+                if (category_error) {
+                    logger.error(category_error);
+                    return await onExec({ data, setStatus });
+                }
 
-        if (!category.is_active) {
-            logger.error('category is disabled', request.url, category.entity_id);
-            data.not_found = true;
-            data.avoid_not_found = false;
-            data.force_not_found = true;
-            return await onExec({ data, setStatus });
-        }
+                if (!category.is_active) {
+                    logger.error(
+                        'category is disabled',
+                        request.url,
+                        category.entity_id
+                    );
+                    data.not_found = true;
+                    data.avoid_not_found = false;
+                    data.force_not_found = true;
+                    return await onExec({ data, setStatus });
+                }
 
-        category.products = [];
+                category.products = [];
 
-        const [products_error, products] = await load_category_products(category.entity_id, store_id);
-        if (!products_error) {
-            category.products = products;
-        }
+                const [products_error, products] = await load_category_products(
+                    category.entity_id,
+                    store_id
+                );
+                if (!products_error) {
+                    category.products = products;
+                }
 
-        data.category = category;
+                data.category = category;
 
-        return data;
-    },
+                return data;
+            }
+        ),
     _wyvr: ({ data, params }) => {
         if (!data || !data.category) {
             return _wyvr({ data });
@@ -51,8 +66,8 @@ export default {
             ...{
                 template: ['shop/Category', 'shop/Default'],
                 methods: ['get'],
-                persist: true
-            }
+                persist: true,
+            },
         };
         if (!data?.category?.entity_id) {
             return result;
@@ -67,12 +82,18 @@ export default {
             })
             .reverse();
 
-        result.template = [`shop/category/id/${data.category.entity_id}`, `shop/category/slug/${params.slug}`, ...path, ...result.template];
+        result.template = [
+            `shop/category/id/${data.category.entity_id}`,
+            `shop/category/slug/${params.slug}`,
+            ...path,
+            ...result.template,
+        ];
 
         return result;
     },
-    title: ({ params, data }) => data.category?.name || data?.title || params.slug,
+    title: ({ params, data }) =>
+        data.category?.name || data?.title || params.slug,
     content: ({ data }) => {
         return data?.content || '';
-    }
+    },
 };
