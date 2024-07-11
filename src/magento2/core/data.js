@@ -1,4 +1,4 @@
-import { Config } from '@wyvr/generator/src/utils/config.js';
+import { get_config } from '@wyvr/generator/shared.js';
 import { get } from '@src/shop/core/settings.js';
 import { replace_content } from '@src/magento2/core/replace_content.js';
 import { load_data } from '@src/shop/core/elasticsearch.js';
@@ -36,11 +36,15 @@ export async function get_magento_data(url) {
             store_id,
             'general.locale.code',
             message,
-            'en_US'
+            undefined
         );
-        locale_cache[store_id] = code.split('_')[0];
+        // only update the cache when the code is from the settings
+        if (code !== undefined) {
+            locale_cache[store_id] = code.split('_')[0];
+            data.locale = locale_cache[store_id];
+        }
     }
-    data.locale = locale_cache[store_id];
+    data.locale = locale_cache[store_id] ?? 'en';
 
     // try load currency from cache
     if (!currency_cache[store_id]) {
@@ -62,7 +66,7 @@ export function get_store_key(url) {
     return undefined;
 }
 export function get_store_data(store_key) {
-    const stores = Config.get('shop.stores');
+    const stores = get_config('shop.stores');
     const result = { stores };
     const store_keys = Object.keys(stores);
 
